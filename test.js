@@ -2,47 +2,65 @@ require('dotenv/config')
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const ping = require('minecraft-server-util');
+const fs = require('fs')
 
 async function pingServer() {
     return await ping('codehaunted.aternos.me', 25565);
 }
 
-let id, canal, status
-
-async function setChannel(id){
+async function getChannel(id){
     return await client.channels.fetch(id).then(channel => {
         return channel
     })
 }
 
+function arraysEqual(a1,a2) {
+    return JSON.stringify(a1)==JSON.stringify(a2);
+}
+
+let status, players
 async function getStatus(canal){
-    const response = await pingServer()
     try{
+        const response = await pingServer()
         if(response.descriptionText.includes('offline') && status !== "offline"){
             status = "offline"
-            canal.send("O servidor está offline")
+            canal.send(":octagonal_sign: **O servidor foi parado!**")
         }else if(Number(response.maxPlayers)>0 && status !== "iniciado"){
+            players = [...response.samplePlayers]
             status = "iniciado"
-            canal.send("Servidor iniciado")
+            canal.send(":white_check_mark: **O servidor iniciou!**")
         }
-    }catch(e){
-        if(status !== "iniciando"){
-            canal.send("O servidor está iniciando")
-        }
-        status = "iniciando"
-    }
+        console.log(arraysEqual(players,))
+        console.log(players)
+        console.log(response.samplePlayers)
+    }catch(e){}
     getStatus(canal)
 }
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    const setchannel = setInterval(async () => {
-        if(id){
-            canal = await setChannel(id)
-            clearInterval(setchannel)
-            getStatus(canal)
-        }
-    }, 1000)
+    let id
+    try{
+        id = JSON.parse(fs.readFileSync('config.json')).id
+    }catch(e){
+        console.log('Arquivo de config não encontrado')
+    }
+    if(!id){
+        console.log('Id não definido')
+        const getId = setInterval(async () => {
+            try{
+                id = JSON.parse(fs.readFileSync('config.json')).id
+            }catch(e){}
+            if(id){
+                clearInterval(getId)
+                const canal = await getChannel(id)
+                getStatus(canal)
+            }
+        }, 1000)
+    }else{
+        const canal = await getChannel(id)
+        getStatus(canal)
+    }
 });
 
 client.on('message', async msg => {
@@ -60,6 +78,8 @@ client.on('message', async msg => {
                 msg.channel.send("O servidor está offline")
             }else if(Number(response.maxPlayers)>0){
                 msg.channel.send("Servidor iniciado")
+            }else if(response.descriptionText.includes('preparing')){
+                msg.channel.send("O servidor está iniciando")
             }else{
                 msg.channel.send("Estado inválido")
                 console.log(response)
@@ -68,7 +88,14 @@ client.on('message', async msg => {
             msg.channel.send("Servidor iniciando")
         }
     }else if(command === 'setchannel'){
-        id = args[0].replace('<#', '').replace('>', '')
+        const id = args[0].replace('<#', '').replace('>', '')
+        fs.writeFileSync('config.json', JSON.stringify({id}))
+    }else if(command == 'onlines'){
+        const response = await pingServer()
+        const players = response.samplePlayers.reduce((reducer, value, index) => {
+            return reducer += (index + 1 != response.samplePlayers.length  ? `${value.name}, ` : `${value.name}`)
+        }, '')
+        msg.channel.send(players)
     }
 });
 
