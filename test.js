@@ -18,6 +18,10 @@ function arraysEqual(a1,a2) {
     return JSON.stringify(a1)==JSON.stringify(a2);
 }
 
+function getPlayers(response){
+    return response.samplePlayers && response.samplePlayers.map(player => player.name) || []
+}
+
 let status, players
 async function getStatus(canal){
     try{
@@ -26,14 +30,33 @@ async function getStatus(canal){
             status = "offline"
             canal.send(":octagonal_sign: **O servidor foi parado!**")
         }else if(Number(response.maxPlayers)>0 && status !== "iniciado"){
-            players = [...response.samplePlayers]
+            players = [...getPlayers(response)]
             status = "iniciado"
             canal.send(":white_check_mark: **O servidor iniciou!**")
+            canal.send(`**IP: ${response.host}:${response.port}**`)
         }
-        console.log(arraysEqual(players,))
-        console.log(players)
-        console.log(response.samplePlayers)
-    }catch(e){}
+        const atual = getPlayers(response)
+        let connected = []
+        let disconnected = []
+        if(!arraysEqual(players, atual)){
+            connected = atual.filter(player => {
+                return !players.includes(player)
+            })
+            disconnected = players.filter(player => {
+                return !atual.includes(player)
+            })
+            players = [...getPlayers(response)]
+        }
+        connected.forEach(player => {
+            canal.send(`**${player} conectou ao servidor**`)
+        })
+        disconnected.forEach(player => {
+            canal.send(`**${player} desconectou do servidor**`)
+        })
+        
+    }catch(e){
+        console.log(e)
+    }
     getStatus(canal)
 }
 
@@ -68,7 +91,7 @@ client.on('message', async msg => {
     if(!msg.content.startsWith(process.env.prefix)) return;
     const args = msg.content.slice(process.env.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
-    if (command === 'online') {
+    if (command === 'status') {
         try{
             const response = await pingServer()
             if(response.descriptionText.includes('queue')){
@@ -77,7 +100,7 @@ client.on('message', async msg => {
             }else if(response.descriptionText.includes('offline')){
                 msg.channel.send("O servidor está offline")
             }else if(Number(response.maxPlayers)>0){
-                msg.channel.send("Servidor iniciado")
+                msg.channel.send("Servidor online")
             }else if(response.descriptionText.includes('preparing')){
                 msg.channel.send("O servidor está iniciando")
             }else{
@@ -88,14 +111,23 @@ client.on('message', async msg => {
             msg.channel.send("Servidor iniciando")
         }
     }else if(command === 'setchannel'){
-        const id = args[0].replace('<#', '').replace('>', '')
-        fs.writeFileSync('config.json', JSON.stringify({id}))
-    }else if(command == 'onlines'){
+        if(msg.member.hasPermission('ADMINISTRATOR')){
+            const id = args[0].replace('<#', '').replace('>', '')
+            fs.writeFileSync('config.json', JSON.stringify({id}))
+        }else{
+            msg.channel.send("Você não tem permissão para utilizar esse comando")
+        }
+    }else if(command == 'online'){
         const response = await pingServer()
-        const players = response.samplePlayers.reduce((reducer, value, index) => {
-            return reducer += (index + 1 != response.samplePlayers.length  ? `${value.name}, ` : `${value.name}`)
-        }, '')
-        msg.channel.send(players)
+        if(Number(response.maxPlayers)>0){
+            const players = response.samplePlayers.reduce((reducer, value, index) => {
+                return reducer += (index + 1 != response.samplePlayers.length  ? `${value.name}, ` : `${value.name}`)
+            }, '')
+            const quantidade = response.samplePlayers.length
+            msg.channel.send(quantidade > 1 ? `Jogadores(${quantidade}): ${players}` : `Jogador(1): ${players}`)
+        }else{
+            msg.channel.send("Servidor offline")
+        }
     }
 });
 
