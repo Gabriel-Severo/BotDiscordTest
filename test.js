@@ -35,24 +35,26 @@ async function getStatus(canal){
             canal.send(":white_check_mark: **O servidor iniciou!**")
             canal.send(`**IP: ${response.host}:${response.port}**`)
         }
-        const atual = getPlayers(response)
-        let connected = []
-        let disconnected = []
-        if(!arraysEqual(players, atual)){
-            connected = atual.filter(player => {
-                return !players.includes(player)
+        if(Number(response.maxPlayers)>0){
+            const atual = getPlayers(response)
+            let connected = []
+            let disconnected = []
+            if(!arraysEqual(players, atual)){
+                connected = atual.filter(player => {
+                    return !players.includes(player)
+                })
+                disconnected = players.filter(player => {
+                    return !atual.includes(player)
+                })
+                players = [...getPlayers(response)]
+            }
+            connected.forEach(player => {
+                canal.send(`**${player} conectou ao servidor**`)
             })
-            disconnected = players.filter(player => {
-                return !atual.includes(player)
+            disconnected.forEach(player => {
+                canal.send(`**${player} desconectou do servidor**`)
             })
-            players = [...getPlayers(response)]
         }
-        connected.forEach(player => {
-            canal.send(`**${player} conectou ao servidor**`)
-        })
-        disconnected.forEach(player => {
-            canal.send(`**${player} desconectou do servidor**`)
-        })
         
     }catch(e){
         console.log(e)
