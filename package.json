@@ -4,8 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +19,10 @@
   "homepage": "https://github.com/Gabriel-Severo/BotDiscordTest#readme",
   "dependencies": {
     "discord.js": "^12.2.0",
+    "discord.js-commando": "github:discordjs/Commando",
     "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
