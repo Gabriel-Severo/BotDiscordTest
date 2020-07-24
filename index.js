@@ -1,7 +1,7 @@
 require('dotenv/config')
 const { CommandoClient } = require('discord.js-commando')
+const { Structures } = require('discord.js')
 const path = require('path')
-
 const client = new CommandoClient({
     commandPrefix: process.env.PREFIX,
     owner: '254664533270855680'
@@ -10,7 +10,8 @@ const client = new CommandoClient({
 client.registry
     .registerDefaultTypes()
     .registerGroups([
-        ['music', 'Comandos de música']
+        ['music', 'Comandos de música'],
+        ['zoeira', 'Comandos de zoeira']
     ])
     .registerDefaultGroups()
     .registerDefaultCommands({
