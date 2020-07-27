@@ -28,20 +28,46 @@ module.exports = class PlayCommand extends Command {
 	async run(message, {query}) {
         const voiceChannel = message.member.voice.channel;
         if(!voiceChannel){
-            return message.say("Você precisa estar em canal de voz")
+            return message.say("Você precisa estar em um canal de voz")
         }
-        if(query.match('^(?!.*\?v=)https:\/\/www\.youtube\.com\/.*\?list=.*$')){
-            console.log("Playlist")
+        if(query.match('^https:\/\/www\.youtube\.com\/.*\?list=.*$')){
+            const playlist = await youtube.getPlaylist(query).catch(() => {
+                return message.say("Esta playlist não existe ou está privada")
+            })
+
+            const videoObj = await playlist.getVideos().catch(() => {
+                console.log("Há um problema em obter os vídeos da playlist")
+            })
+
+            for(let i = 0; i < videoObj.length; i++){
+                if(videoObj[i].raw.status.privacyStatus === 'private'){
+                    continue
+                }else{
+                    const video = await videoObj[i].fetch()
+                    message.guild.musicData.queue.push(
+                        PlayCommand.constructSongObj(video)
+                    )
+                }
+
+            }
+            
+            if(!message.guild.musicData.isPlaying){
+                message.guild.musicData.isPlaying = true
+                PlayCommand.playSong(message.guild.musicData.queue, message)
+            }else if(message.guild.musicData.isPlaying){
+                message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
+            }
         }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
-            console.log("Video normal")
-            voiceChannel.join().then((connection) => {
-                connection.play(ytdl(query, {quality: 'highestaudio'}))
-                .on('start', () => {
-                    message.say("Começou tocar")
-                })
-                .on('finish', () => {
-                    message.say('Terminou de tocar')
-                })
+            youtube.getVideo(query).then(video => {
+                message.guild.musicData.queue.push(
+                    PlayCommand.constructSongObj(video)
+                )
+                if(!message.guild.musicData.isPlaying){
+                    message.guild.musicData.isPlaying = true
+                    PlayCommand.playSong(message.guild.musicData.queue, message)
+                }else{
+                    message.say(`${video.title} adicionado a fila`)
+                }
             })
         }else{
             const videos = await youtube.search(query, 5).catch(async () =>{
@@ -70,17 +96,74 @@ module.exports = class PlayCommand extends Command {
                 if(response.first().content === 'cancel') return songEmbed.delete()
                 const videoID = parseInt(response.first().content)
 
-                voiceChannel.join().then((connection) => {
-                    connection.play(ytdl(`https://www.youtube.com/watch?v=${videos[videoID - 1].id}`, {quality: 'highestaudio'}))
-                    .on('start', () => {
-                        message.say("Começou tocar")
+                    songEmbed.delete()
+                    youtube.getVideoByID(videos[videoID - 1].id).then((video) => {
+                        message.guild.musicData.queue.push(
+                            PlayCommand.constructSongObj(video)
+                        )
+                        if(!message.guild.musicData.isPlaying) {
+                            message.guild.musicData.isPlaying = true
+                            PlayCommand.playSong(message.guild.musicData.queue, message)
+                        }else{
+                            message.say(`${video.title} adicionado a fila`)
+                        }
                     })
-                    .on('finish', () => {
-                        message.say('Terminou de tocar')
-                    })
-                })
+
             }).catch((err) => {console.log(err)})
             
         }
-	}
+    }
+    static playSong(queue, message) {
+        const voiceChannel = message.member.voice.channel
+        voiceChannel.join().then((connection) => {
+            const dispatcher = connection.play(ytdl(queue[0].url, {quality: 'highestaudio'}))
+            .on('start', () => {
+                message.guild.musicData.songDispatcher = dispatcher
+                dispatcher.setVolume(message.guild.musicData.volume)
+                const videoEmbed = new MessageEmbed()
+                    .setThumbnail(queue[0].thumbnail)
+                    .setColor('#e9f931')
+                    .addField('Now Playing:', queue[0].title)
+                    .addField('Duration:', queue[0].duration)
+                message.channel.send(videoEmbed)
+                message.guild.musicData.nowPlaying = queue[0]
+                return queue.shift()
+            })
+            .on('finish', () => {
+                if(queue.length >= 1) {
+                    return this.playSong(queue, message)
+                }else{
+                    message.guild.musicData.isPlaying = false
+                    message.guild.musicData.nowPlaying = null
+                    message.guild.musicData.songDispatcher = null
+                    if(message.guild.me.voice.channel){
+                        return message.guild.me.voice.channel.leave()
+                    }
+                }
+            })
+        })
+    }
+
+    static constructSongObj(video){
+        let duration = this.formatDuration(video.duration)
+        if(duration == '00:00') duration = 'Live Stream'
+        return {
+            url: `https://www.youtube.com/watch?v=${video.raw.id}`,
+            title: video.title,
+            rawDuration: video.duration,
+            duration,
+            thumbnail: video.thumbnails.high.url,
+        }
+    }
+
+    static formatDuration(durationObj) {
+        return `${durationObj.hours ? (durationObj.hours + ':') : ''}${
+            durationObj.minutes ? durationObj.minutes : '00'
+        }:${
+            durationObj.seconds < 10 ? 
+            (durationObj.seconds + '0') : 
+            durationObj.seconds ?
+            durationObj.seconds : '00'
+        }`
+    }
 };
