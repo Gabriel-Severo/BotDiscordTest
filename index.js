@@ -12,7 +12,8 @@ Structures.extend('Guild', (Guild) => {
                 isPlaying: false,
                 nowPlaying: null,
                 songDispatcher: null,
-                volume: 0.5
+                looping: false,
+                volume: 0.05
             }
         }
     }
@@ -41,5 +42,26 @@ client.registry
 client.on('ready', () => {
     console.log(`${client.user.tag} is alive`)
 })
+
+client.on('voiceStateUpdate', async (___, newState) => {
+    if (
+        newState.member.user.bot &&
+        !newState.channelID &&
+        newState.guild.musicData.songDispatcher &&
+        newState.member.user.id == client.user.id
+    ) {
+        newState.guild.musicData.queue.length = 0;
+        newState.guild.musicData.songDispatcher.end();
+        return;
+    }
+    if (
+        newState.member.user.bot &&
+        newState.channelID &&
+        newState.member.user.id == client.user.id &&
+        !newState.selfDeaf
+    ) {
+         newState.setSelfDeaf(true);
+    }
+});
 
 client.login(process.env.TOKEN)

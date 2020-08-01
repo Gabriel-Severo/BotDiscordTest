@@ -31,9 +31,12 @@ module.exports = class PlayCommand extends Command {
             return message.say("Você precisa estar em um canal de voz")
         }
         if(query.match('^https:\/\/www\.youtube\.com\/.*\?list=.*$')){
-            const playlist = await youtube.getPlaylist(query).catch(() => {
+            let playlist;
+            try{
+                playlist = await youtube.getPlaylist(query)
+            }catch(e){
                 return message.say("Esta playlist não existe ou está privada")
-            })
+            }
 
             const videoObj = await playlist.getVideos().catch(() => {
                 console.log("Há um problema em obter os vídeos da playlist")
@@ -48,12 +51,12 @@ module.exports = class PlayCommand extends Command {
                         PlayCommand.constructSongObj(video)
                     )
                 }
-
             }
             
             if(!message.guild.musicData.isPlaying){
                 message.guild.musicData.isPlaying = true
                 PlayCommand.playSong(message.guild.musicData.queue, message)
+                message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
             }else if(message.guild.musicData.isPlaying){
                 message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
             }
@@ -70,8 +73,8 @@ module.exports = class PlayCommand extends Command {
                 }
             })
         }else{
-            const videos = await youtube.search(query, 5).catch(async () =>{
-                return message.say("Erro ao procurar")
+            const videos = await youtube.searchVideos(query, 5).catch(async () =>{
+                await message.say("Erro ao procurar")
             })
             
             const embed = new MessageEmbed()
@@ -123,15 +126,19 @@ module.exports = class PlayCommand extends Command {
                 const videoEmbed = new MessageEmbed()
                     .setThumbnail(queue[0].thumbnail)
                     .setColor('#e9f931')
-                    .addField('Now Playing:', queue[0].title)
-                    .addField('Duration:', queue[0].duration)
+                    .addField('Tocando agora:', queue[0].title)
+                    .addField('Duração:', queue[0].duration)
                 message.channel.send(videoEmbed)
                 message.guild.musicData.nowPlaying = queue[0]
                 return queue.shift()
             })
             .on('finish', () => {
-                if(queue.length >= 1) {
-                    return this.playSong(queue, message)
+                const guildQueue = message.guild.musicData.queue
+                if(message.guild.musicData.looping){
+                    guildQueue.unshift(message.guild.musicData.nowPlaying)
+                }
+                if(guildQueue.length >= 1) {
+                    return this.playSong(guildQueue, message)
                 }else{
                     message.guild.musicData.isPlaying = false
                     message.guild.musicData.nowPlaying = null
@@ -141,6 +148,19 @@ module.exports = class PlayCommand extends Command {
                     }
                 }
             })
+            .on('error', (e) => {
+                message.say('Cannot play song');
+				console.error(e);
+				message.guild.musicData.queue.length = 0;
+				message.guild.musicData.isPlaying = false;
+				message.guild.musicData.nowPlaying = null;
+				message.guild.musicData.songDispatcher = null;
+				return message.guild.me.voice.channel.leave();
+            })
+        }).catch(e => {
+            console.log(e)
+            console.log("Erro 2")
+            return message.guild.me.voice.channel.leave()
         })
     }
 
