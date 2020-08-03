@@ -41,38 +41,27 @@ module.exports = class PlayCommand extends Command {
             const videoObj = await playlist.getVideos().catch(() => {
                 console.log("Há um problema em obter os vídeos da playlist")
             })
-
-            const video = await videoObj[0].fetch()
-            message.guild.musicData.queue.push(
-                PlayCommand.constructSongObj(video)
-            )
-
-            //Adiciona uma música e depois o restante das músicas
             
-            if(!message.guild.musicData.isPlaying){
-                message.guild.musicData.isPlaying = true
-                PlayCommand.playSong(message.guild.musicData.queue, message)
-                message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
-            }else if(message.guild.musicData.isPlaying){
-                message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
-            }
-
-
-            //Adiciona o restante das músicas
-
-            for(let i = 1; i < videoObj.length; i++){
+            for(let i = 0; i < videoObj.length; i++){
                 if(videoObj[i].raw.status.privacyStatus === 'private'){
                     continue
                 }else{
                     const video = await videoObj[i].fetch()
                     message.guild.musicData.queue.push(
                         PlayCommand.constructSongObj(video)
-                    )
+                        )
+                    }
                 }
-            }
-            
-        }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
-            youtube.getVideo(query).then(video => {
+                
+                if(!message.guild.musicData.isPlaying){
+                    message.guild.musicData.isPlaying = true
+                    PlayCommand.playSong(message.guild.musicData.queue, message)
+                    message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
+                }else if(message.guild.musicData.isPlaying){
+                    message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
+                }
+            }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
+                youtube.getVideo(query).then(video => {
                 message.guild.musicData.queue.push(
                     PlayCommand.constructSongObj(video)
                 )
