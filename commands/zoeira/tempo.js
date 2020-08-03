@@ -23,7 +23,14 @@ module.exports = class TempoCommand extends Command {
             meses: Math.floor(diferenca / (1000 * 2419200))
         }
         message.delete()
-        const mensagem = await message.say(`${obj.segundos} segundos\n${obj.minutos} minutos e ${obj.segundos % 60} segundos\n${obj.horas} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos\n${obj.dias} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos\n${obj.semanas} semanas, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos\n${obj.meses} meses, ${Math.floor(obj.dias % 30.5)} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos`)
+        const mensagem = await message.say(`-
+                              ${obj.segundos} segundos
+                        ${obj.minutos} minutos e ${obj.segundos % 60} segundos
+                    ${obj.horas} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+                ${obj.dias} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+            ${obj.semanas} semanas, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+        ${obj.meses} meses, ${Math.floor(obj.dias % 30.5)} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+        `)
         setInterval(() => {
             dia = new Date()
             diferenca = final - dia
@@ -35,7 +42,14 @@ module.exports = class TempoCommand extends Command {
                 semanas: Math.floor(diferenca / (1000 * 604800)),
                 meses: Math.floor(diferenca / (1000 * 2419200))
             }
-            mensagem.edit(`${obj.segundos} segundos\n${obj.minutos} minutos e ${obj.segundos % 60} segundos\n${obj.horas} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos\n${obj.dias} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos\n${obj.semanas} semanas, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos\n${obj.meses} meses, ${Math.floor(obj.dias % 30.5)} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos`)
-        }, 1000)
+            mensagem.edit(`-
+                                  ${obj.segundos} segundos
+                            ${obj.minutos} minutos e ${obj.segundos % 60} segundos
+                        ${obj.horas} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+                    ${obj.dias} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+                ${obj.semanas} semanas, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+            ${obj.meses} meses, ${Math.floor(obj.dias % 30.5)} dias, ${obj.horas % 24} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
+            `)
+        }, 3000)
     }
 }
