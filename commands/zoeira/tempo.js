@@ -23,7 +23,7 @@ module.exports = class TempoCommand extends Command {
             meses: Math.floor(diferenca / (1000 * 2419200))
         }
         message.delete()
-        const mensagem = await message.say(`-
+        const mensagem = await message.say(`=-=-=-=-=-=-=-= Tempo restante =-=-=-=-=-=-=-=
                               ${obj.segundos} segundos
                         ${obj.minutos} minutos e ${obj.segundos % 60} segundos
                     ${obj.horas} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
@@ -42,7 +42,7 @@ module.exports = class TempoCommand extends Command {
                 semanas: Math.floor(diferenca / (1000 * 604800)),
                 meses: Math.floor(diferenca / (1000 * 2419200))
             }
-            mensagem.edit(`-
+            mensagem.edit(`=-=-=-=-=-=-=-= Tempo restante =-=-=-=-=-=-=-=
                                   ${obj.segundos} segundos
                             ${obj.minutos} minutos e ${obj.segundos % 60} segundos
                         ${obj.horas} horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
