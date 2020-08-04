@@ -2,6 +2,7 @@ require('dotenv/config')
 const { CommandoClient } = require('discord.js-commando')
 const { Structures } = require('discord.js')
 const path = require('path')
+const contador = require('./services/contador')
 
 Structures.extend('Guild', (Guild) => {
     class MusicGuild extends Guild{
@@ -41,6 +42,7 @@ client.registry
 
 client.on('ready', () => {
     console.log(`${client.user.tag} is alive`)
+    contador(client)
 })
 
 client.on('voiceStateUpdate', async (___, newState) => {
