@@ -28,7 +28,7 @@ module.exports = class PlayCommand extends Command {
 	async run(message, {query}) {
         const voiceChannel = message.member.voice.channel;
         if(!voiceChannel){
-            return message.say("Você precisa estar em um canal de voz")
+            return message.say("Você precisa estar em um canal de voz.")
         }
         if(query.match('^https:\/\/www\.youtube\.com\/.*\?list=.*$')){
             let playlist;
