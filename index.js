@@ -41,7 +41,7 @@ client.registry
     .registerCommandsIn(path.join(__dirname, 'commands'))
 
 client.on('ready', () => {
-    console.log(`${client.user.tag} is alive.`)
+    console.log(`${client.user.tag}`)
     contador(client)
 })
 
