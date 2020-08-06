@@ -24,20 +24,22 @@ Structures.extend('Guild', (Guild) => {
 const client = new CommandoClient({
     commandPrefix: process.env.PREFIX,
     owner: '254664533270855680',
-    unknownCommandResponse: false
 })
 
 client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['music', 'Comandos de música'],
-        ['zoeira', 'Comandos de zoeira']
+        ['zoeira', 'Comandos de zoeira'],
+        ['config', 'Configurações do bot']
     ])
     .registerDefaultGroups()
     .registerDefaultCommands({
-        eval: true,
+        eval: false,
         prefix: false,
-        commandState: false
+        commandState: false,
+        unknownCommand: false,
+        help: false
     })
     .registerCommandsIn(path.join(__dirname, 'commands'))
 
