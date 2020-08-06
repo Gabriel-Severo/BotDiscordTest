@@ -8,9 +8,9 @@ const { MessageEmbed } = require('discord.js')
 module.exports = class PlayCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'play',
+			name: 'playsearch',
 			group: 'music',
-			memberName: 'play',
+			memberName: 'playsearch',
             description: 'Play a song',
             args: [
                 {
@@ -30,66 +30,47 @@ module.exports = class PlayCommand extends Command {
         if(!voiceChannel){
             return message.say("Você precisa estar em um canal de voz.")
         }
-        if(query.match('^https:\/\/www\.youtube\.com\/.*\?list=.*$')){
-            let playlist;
-            try{
-                playlist = await youtube.getPlaylist(query)
-            }catch(e){
-                return message.say("Esta playlist não existe ou está privada")
-            }
+        const videos = await youtube.searchVideos(query, 5).catch(async () =>{
+            await message.say("Erro ao procurar")
+        })
+        
+        const embed = new MessageEmbed()
+            .setColor('#e9f931')
+            .setTitle("Videos")
+            .addField('Música 1', videos[0].title)
+            .addField('Música 2', videos[1].title)
+            .addField('Música 3', videos[2].title)
+            .addField('Música 4', videos[3].title)
+            .addField('Música 5', videos[4].title)
+            .addField('Cancel', 'cancelar')
+        let songEmbed = await message.channel.send({embed})
 
-            const videoObj = await playlist.getVideos().catch(() => {
-                console.log("Há um problema em obter os vídeos da playlist")
-            })
-            
-            for(let i = 0; i < videoObj.length; i++){
-                if(videoObj[i].raw.status.privacyStatus === 'private'){
-                    continue
-                }else{
-                    const video = await videoObj[i].fetch()
+        message.channel.awaitMessages((msg) => {
+            return (msg.content > 0 && msg.content < 6) || msg.content === 'exit'
+        }, 
+        {
+            max: 1,
+            time: 60000,
+            error: ['time']
+        }).then(async (response) => {
+            if(response.first().content === 'cancel') return songEmbed.delete()
+            const videoID = parseInt(response.first().content)
+
+                songEmbed.delete()
+                youtube.getVideoByID(videos[videoID - 1].id).then((video) => {
                     message.guild.musicData.queue.push(
                         PlayCommand.constructSongObj(video)
-                        )
+                    )
+                    if(!message.guild.musicData.isPlaying) {
+                        message.guild.musicData.isPlaying = true
+                        PlayCommand.playSong(message.guild.musicData.queue, message)
+                    }else{
+                        message.say(`${video.title} adicionado a fila`)
                     }
-                }
-                
-                if(!message.guild.musicData.isPlaying){
-                    message.guild.musicData.isPlaying = true
-                    PlayCommand.playSong(message.guild.musicData.queue, message)
-                    message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
-                }else if(message.guild.musicData.isPlaying){
-                    message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
-                }
-            }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
-                youtube.getVideo(query).then(video => {
-                message.guild.musicData.queue.push(
-                    PlayCommand.constructSongObj(video)
-                )
-                if(!message.guild.musicData.isPlaying){
-                    message.guild.musicData.isPlaying = true
-                    PlayCommand.playSong(message.guild.musicData.queue, message)
-                }else{
-                    message.say(`${video.title} adicionado a fila`)
-                }
-            })
-        }else{
-            const videos = await youtube.searchVideos(query, 1).catch(async () =>{
-                await message.say("Erro ao procurar")
-            })
+                })
+
+        }).catch((err) => {console.log(err)})
             
-            youtube.getVideoByID(videos[0].id).then((video) => {
-                message.guild.musicData.queue.push(
-                    PlayCommand.constructSongObj(video)
-                )
-                if(!message.guild.musicData.isPlaying) {
-                    message.guild.musicData.isPlaying = true
-                    PlayCommand.playSong(message.guild.musicData.queue, message)
-                }else{
-                    message.say(`${video.title} adicionado a fila`)
-                }
-            })
-            
-        }
     }
     static playSong(queue, message) {
         const voiceChannel = message.member.voice.channel
