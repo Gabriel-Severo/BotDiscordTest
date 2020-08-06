@@ -14,7 +14,7 @@ Structures.extend('Guild', (Guild) => {
                 nowPlaying: null,
                 songDispatcher: null,
                 looping: false,
-                volume: 0.05
+                volume: 0.30
             }
         }
     }
@@ -23,7 +23,8 @@ Structures.extend('Guild', (Guild) => {
 
 const client = new CommandoClient({
     commandPrefix: process.env.PREFIX,
-    owner: '254664533270855680'
+    owner: '254664533270855680',
+    unknownCommandResponse: false
 })
 
 client.registry
