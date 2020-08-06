@@ -22,8 +22,9 @@ module.exports = class QueueCommand extends Command {
         })
     }
     run(message, {page}){
-        const allPages = Math.floor(message.guild.musicData.queue.length / 10)
-        if(message.guild.musicData.queue < 10){
+        const allPages = Math.ceil(message.guild.musicData.queue.length / 10)
+        console.log(allPages)
+        if(message.guild.musicData.queue.length < 10){
             page = 1
         }else if(allPages < page){
             return message.say("Página inválida")
@@ -39,14 +40,14 @@ module.exports = class QueueCommand extends Command {
         let musics;
         if(page == allPages){
             const total = message.guild.musicData.queue.length
-            const remain = total - (allPages * 10)
-            musics = message.guild.musicData.queue.slice(page*10, total)
-            for(let i = 0; i < remain; i++){
+            const inicial = ((allPages-1) * 10)
+            musics = message.guild.musicData.queue.slice(inicial, total)
+            for(let i = 0; i < musics.length; i++){
                 queueEmbed.addField(`${(page-1) * 10 + i + 1}:`, `${musics[i].title}`)
             }
         }else{
-            musics = message.guild.musicData.queue.slice(page*10, page*10+10)
-            for(let i = 0; i < 10; i++){
+            musics = message.guild.musicData.queue.slice((page-1)*10, (page-1)*10+10)
+            for(let i = 0; i < musics.length; i++){
                 queueEmbed.addField(`${(page-1) * 10 + i + 1}:`, `${musics[i].title}`)
             }
         }

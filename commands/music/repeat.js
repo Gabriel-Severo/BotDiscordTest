@@ -12,9 +12,9 @@ module.exports = class RepeatCommand extends Command {
                     key: 'number',
                     default: 1,
                     type: 'integer',
-                    prompt: 'Quantas vezes você gostaria de repetir essa música?',
+                    prompt: 'Quantas vezes você gostaria de repetir essa música (máximo 5)?',
                     validate: function(number){
-                        return number > 0 && number < 5
+                        return number > 0 && number <= 20
                     }
                 }
             ]
