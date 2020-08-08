@@ -23,7 +23,6 @@ module.exports = class QueueCommand extends Command {
     }
     run(message, {page}){
         const allPages = Math.ceil(message.guild.musicData.queue.length / 10)
-        console.log(allPages)
         if(message.guild.musicData.queue.length < 10){
             page = 1
         }else if(allPages < page){

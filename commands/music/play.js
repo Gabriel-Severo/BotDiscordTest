@@ -31,6 +31,7 @@ module.exports = class PlayCommand extends Command {
             return message.say("Você precisa estar em um canal de voz.")
         }
         if(query.match('^https:\/\/www\.youtube\.com\/.*\?list=.*$')){
+            console.log('1')
             let playlist;
             try{
                 playlist = await youtube.getPlaylist(query)
@@ -46,22 +47,31 @@ module.exports = class PlayCommand extends Command {
                 if(videoObj[i].raw.status.privacyStatus === 'private'){
                     continue
                 }else{
-                    const video = await videoObj[i].fetch()
                     message.guild.musicData.queue.push(
-                        PlayCommand.constructSongObj(video)
-                        )
-                    }
+                        PlayCommand.constructSongObj(videoObj[i], true)
+                    )
                 }
+            }
+            if(!message.guild.musicData.isPlaying){
+                message.guild.musicData.isPlaying = true
+                PlayCommand.playSong(message.guild.musicData.queue, message)
+                message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
+            }else if(message.guild.musicData.isPlaying){
+                message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
+            }
+
+            const queue = message.guild.musicData.queue
+
+            for(let i = 0; i < queue.length; i++){
+                youtube.getVideo(queue[i].url).then(video => {
+                    queue[i].duration = PlayCommand.formatDuration(video.duration)
+                    queue[i].rawDuration = video.duration
+                })
+            }
                 
-                if(!message.guild.musicData.isPlaying){
-                    message.guild.musicData.isPlaying = true
-                    PlayCommand.playSong(message.guild.musicData.queue, message)
-                    message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
-                }else if(message.guild.musicData.isPlaying){
-                    message.say(`Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`)
-                }
-            }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
-                youtube.getVideo(query).then(video => {
+        }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
+            console.log('2')
+            youtube.getVideo(query).then(video => {
                 message.guild.musicData.queue.push(
                     PlayCommand.constructSongObj(video)
                 )
@@ -73,9 +83,14 @@ module.exports = class PlayCommand extends Command {
                 }
             })
         }else{
-            const videos = await youtube.searchVideos(query, 1).catch(async () =>{
-                await message.say("Erro ao procurar")
+            const videos = await youtube.searchVideos(query, 1).catch(() =>{
+                return message.say("Erro ao procurar")
             })
+
+            if(videos == false){
+                return message.say("Nenhum vídeo foi encontrado")
+            }
+            console.log(videos)
             
             youtube.getVideoByID(videos[0].id).then((video) => {
                 message.guild.musicData.queue.push(
@@ -93,6 +108,7 @@ module.exports = class PlayCommand extends Command {
     }
     static playSong(queue, message) {
         const voiceChannel = message.member.voice.channel
+        //console.log(queue[0].url)
         voiceChannel.join().then((connection) => {
             const dispatcher = connection.play(ytdl(queue[0].url, {quality: 'highestaudio'}))
             .on('start', () => {
@@ -134,16 +150,22 @@ module.exports = class PlayCommand extends Command {
             })
         }).catch(e => {
             console.log(e)
-            console.log("Erro 2")
             return message.guild.me.voice.channel.leave()
         })
     }
 
-    static constructSongObj(video){
+    static constructSongObj(video, durationCal=false){
+        if(durationCal){
+            video.duration = {
+                hours: 0,
+                minutes: 0,
+                seconds: 1
+            }
+        }
         let duration = this.formatDuration(video.duration)
         if(duration == '00:00') duration = 'Live Stream'
         return {
-            url: `https://www.youtube.com/watch?v=${video.raw.id}`,
+            url: `https://www.youtube.com/watch?v=${video.id}`,
             title: video.title,
             rawDuration: video.duration,
             duration,
