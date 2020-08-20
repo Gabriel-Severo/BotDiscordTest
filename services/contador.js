@@ -4,7 +4,7 @@ module.exports = async function contar(client){
         const message = await channel.messages.fetch()
         const mensagem = message.first()
         setInterval(() => {
-            const final = new Date(Date.UTC(2020, 11, 15, 16, 0, 0))
+            const final = new Date(Date.UTC(2020, 10, 29, 16, 0, 0))
             const dia = new Date()
             const diferenca = final - dia
             obj = {
@@ -13,7 +13,7 @@ module.exports = async function contar(client){
                 horas: Math.floor(diferenca / (1000 * 3600)),
                 dias: Math.floor(diferenca / (1000 * 86400)),
                 semanas: Math.floor(diferenca / (1000 * 604800)),
-                meses: Math.floor(diferenca / (1000 * 2419200))
+                meses: Math.floor(diferenca / (1000 * 2592000))
             }
             mensagem.edit(`=-=-=-=-=-=-=-=-  Tempo restante  -=-=-=-=-=-=-=-=
                                     ${obj.segundos} segundos
