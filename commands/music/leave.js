@@ -19,12 +19,11 @@ module.exports = class LeaveCommand extends Command {
         if(!(typeof message.guild.musicData.songDispatcher == 'undefined' ||
         message.guild.musicData.songDispatcher == null)) {
             message.guild.musicData.queue = []
-            message.guild.musicData.queue.length = 0
             message.guild.musicData.songDispatcher.end()
         }else if(!message.guild.me.voice.channel){
             return message.say("Não estou conectado a nenhum canal")
-        }else{
-            message.guild.me.voice.channel.leave()
         }
+
+        message.guild.me.voice.channel.leave()
     }
 }

@@ -1,4 +1,4 @@
-require('dotenv/config')
+const { prefix, token} = require('./config.json')
 const { CommandoClient } = require('discord.js-commando')
 const { Structures } = require('discord.js')
 const path = require('path')
@@ -22,7 +22,7 @@ Structures.extend('Guild', (Guild) => {
 })
 
 const client = new CommandoClient({
-    commandPrefix: process.env.PREFIX,
+    commandPrefix: prefix,
     owner: '254664533270855680',
 })
 
@@ -45,28 +45,7 @@ client.registry
 
 client.on('ready', () => {
     console.log(`${client.user.tag}`)
-    contador(client)
+    //contador(client)
 })
 
-client.on('voiceStateUpdate', async (___, newState) => {
-    if (
-        newState.member.user.bot &&
-        !newState.channelID &&
-        newState.guild.musicData.songDispatcher &&
-        newState.member.user.id == client.user.id
-    ) {
-        newState.guild.musicData.queue.length = 0;
-        newState.guild.musicData.songDispatcher.end();
-        return;
-    }
-    if (
-        newState.member.user.bot &&
-        newState.channelID &&
-        newState.member.user.id == client.user.id &&
-        !newState.selfDeaf
-    ) {
-         newState.setSelfDeaf(true);
-    }
-});
-
-client.login(process.env.TOKEN)
+client.login(token)

@@ -1,7 +1,7 @@
-require('dotenv')
+const { youtube_api } = require('../../config.json')
 const { Command } = require('discord.js-commando')
 const Youtube = require('simple-youtube-api')
-const youtube = new Youtube(process.env.YOUTUBE_API)
+const youtube = new Youtube(youtube_api)
 const ytdl = require('ytdl-core')
 const { MessageEmbed } = require('discord.js')
 

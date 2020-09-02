@@ -1,4 +1,3 @@
-require('dotenv')
 const { Command } = require('discord.js-commando')
 module.exports = class RandomCommand extends Command{
     constructor(cliente){
