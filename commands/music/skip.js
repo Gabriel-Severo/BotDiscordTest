@@ -22,5 +22,8 @@ module.exports = class SkipCommand extends Command {
             }
         message.say(`${message.guild.musicData.nowPlaying.title} foi pulada`)
         message.guild.musicData.songDispatcher.end()
+        if(message.guild.musicData.looping){
+            message.guild.musicData.nowPlaying = null
+        }
     }
 }

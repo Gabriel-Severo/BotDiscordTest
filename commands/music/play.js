@@ -31,7 +31,6 @@ module.exports = class PlayCommand extends Command {
             return message.say("Você precisa estar em um canal de voz.")
         }
         if(query.match('^https:\/\/www\.youtube\.com\/.*\?list=.*$')){
-            console.log('1')
             let playlist;
             try{
                 playlist = await youtube.getPlaylist(query)
@@ -70,7 +69,6 @@ module.exports = class PlayCommand extends Command {
             }
                 
         }else if(query.match('^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+')){
-            console.log('2')
             youtube.getVideo(query).then(video => {
                 message.guild.musicData.queue.push(
                     PlayCommand.constructSongObj(video)
@@ -90,7 +88,6 @@ module.exports = class PlayCommand extends Command {
             if(videos == false){
                 return message.say("Nenhum vídeo foi encontrado")
             }
-            console.log(videos)
             
             youtube.getVideoByID(videos[0].id).then((video) => {
                 message.guild.musicData.queue.push(
@@ -108,7 +105,6 @@ module.exports = class PlayCommand extends Command {
     }
     static playSong(queue, message) {
         const voiceChannel = message.member.voice.channel
-        //console.log(queue[0].url)
         voiceChannel.join().then((connection) => {
             const dispatcher = connection.play(ytdl(queue[0].url, {quality: 'highestaudio'}))
             .on('start', () => {
@@ -125,8 +121,9 @@ module.exports = class PlayCommand extends Command {
             })
             .on('finish', () => {
                 const guildQueue = message.guild.musicData.queue
-                if(message.guild.musicData.looping){
-                    guildQueue.unshift(message.guild.musicData.nowPlaying)
+                if(message.guild.musicData.looping &&
+                    !message.guild.musicData.nowPlaying == null){
+                        return guildQueue.unshift(message.guild.musicData.nowPlaying)
                 }
                 if(guildQueue.length >= 1) {
                     return this.playSong(guildQueue, message)
