@@ -31,17 +31,28 @@ module.exports = class PlayCommand extends Command {
     if (!voiceChannel) {
       return message.say(pt_br.notonchannel);
     }
+    if (!message.guild.me.voice.channel) {
+      message.say(
+        `:thumbsup: **Conectado em** \`${voiceChannel.parent.name}\` :page_facing_up: **No canal** \`${voiceChannel.name}\` `
+      );
+    }
+
     if (query.match('^https://www.youtube.com/.*?list=.*$')) {
       let playlist;
+      message.say(
+        `<:youtube:753964922148225024> **Procurando por** :mag_right: \`${query}\``
+      );
       try {
         playlist = await youtube.getPlaylist(query);
       } catch (e) {
-        return message.say(pt_br.privateerror);
+        return message.say(pt_br.playlisterror);
       }
 
       const videoObj = await playlist.getVideos().catch(() => {
-        console.log('Há um problema em obter os vídeos da playlist');
+        console.log(pt_br.videoserror);
       });
+
+      const position = message.guild.musicData.queue.length;
 
       for (let i = 0; i < videoObj.length; i++) {
         if (videoObj[i].raw.status.privacyStatus === 'private') {
@@ -52,20 +63,21 @@ module.exports = class PlayCommand extends Command {
           );
         }
       }
+
       if (!message.guild.musicData.isPlaying) {
         message.guild.musicData.isPlaying = true;
         PlayCommand.playSong(message.guild.musicData.queue, message);
-        message.say(
-          `Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`
-        );
-      } else if (message.guild.musicData.isPlaying) {
-        message.say(
-          `Playlist - :musical_note:  ${playlist.title} :musical_note: foi adicionada a fila`
-        );
       }
 
-      const queue = message.guild.musicData.queue;
+      const PlaylistEmbed = PlayCommand.createPlaylistEmbed(
+        message,
+        playlist,
+        position,
+        videoObj
+      );
+      message.say(PlaylistEmbed);
 
+      const queue = message.guild.musicData.queue;
       for (let i = 0; i < queue.length; i++) {
         youtube.getVideo(queue[i].url).then((video) => {
           queue[i].duration = PlayCommand.formatDuration(video.duration);
@@ -75,16 +87,27 @@ module.exports = class PlayCommand extends Command {
     } else if (
       query.match('^(http(s)?://)?((w){3}.)?youtu(be|.be)?(.com)?/.+')
     ) {
+      message.say(
+        `<:youtube:753964922148225024> **Procurando por** :mag_right: \`${query}\``
+      );
       youtube.getVideo(query).then((video) => {
         message.guild.musicData.queue.push(PlayCommand.constructSongObj(video));
         if (!message.guild.musicData.isPlaying) {
           message.guild.musicData.isPlaying = true;
           PlayCommand.playSong(message.guild.musicData.queue, message);
+          message.say(`**Tocando** :notes: \`${video.title}\` - **Agora**!`);
         } else {
-          message.say(`${video.title} adicionado a fila`);
+          const queueEmbed = PlayCommand.createQueueEmbed(
+            message,
+            video.channel.title
+          );
+          message.say(queueEmbed);
         }
       });
     } else {
+      message.say(
+        `<:youtube:753964922148225024> **Procurando por** :mag_right: \`${query}\``
+      );
       const videos = await youtube.searchVideos(query, 1).catch(() => {
         return message.say('Erro ao procurar');
       });
@@ -98,8 +121,13 @@ module.exports = class PlayCommand extends Command {
         if (!message.guild.musicData.isPlaying) {
           message.guild.musicData.isPlaying = true;
           PlayCommand.playSong(message.guild.musicData.queue, message);
+          message.say(`**Tocando** :notes: \`${video.title}\` - **Agora**!`);
         } else {
-          message.say(`${video.title} adicionado a fila`);
+          const queueEmbed = PlayCommand.createQueueEmbed(
+            message,
+            video.channel.title
+          );
+          message.say(queueEmbed);
         }
       });
     }
@@ -112,18 +140,15 @@ module.exports = class PlayCommand extends Command {
         const dispatcher = connection
           .play(
             ytdl(queue[0].url, {
-              quality: 'highestaudio'
-            })
+              filter: 'audioonly',
+              quality: 'highestaudio',
+              highWaterMark: 1 << 25
+            }),
+            { highWaterMark: 1 }
           )
           .on('start', () => {
             message.guild.musicData.songDispatcher = dispatcher;
             dispatcher.setVolume(message.guild.musicData.volume);
-            const videoEmbed = new MessageEmbed()
-              .setThumbnail(queue[0].thumbnail)
-              .setColor('#e9f931')
-              .addField('Tocando agora:', queue[0].title)
-              .addField('Duração:', queue[0].duration);
-            message.channel.send(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
             return queue.shift();
           })
@@ -191,5 +216,32 @@ module.exports = class PlayCommand extends Command {
         ? durationObj.seconds
         : '00'
     }`;
+  }
+
+  static createPlaylistEmbed(message, playlist, position, videoObj) {
+    return new MessageEmbed()
+      .setTitle(playlist.title)
+      .setAuthor(
+        'Playlist adicionada a fila',
+        message.author.avatarURL(),
+        playlist.url
+      )
+      .setThumbnail(videoObj[0].thumbnails.high.url)
+      .addField('Estimado até tocar', 'Agora')
+      .addField('Posição na fila', position == 0 ? 'Agora' : position, true)
+      .addField('Adicionadas', `\`${videoObj.length}\` músicas`, true);
+  }
+
+  static createQueueEmbed(message, channel) {
+    const video = message.guild.musicData.queue.slice(-1)[0];
+    return new MessageEmbed()
+      .setTitle(video.title)
+      .setURL(video.url)
+      .setThumbnail(video.thumbnail)
+      .setAuthor('Adicionada a fila', message.author.avatarURL())
+      .addField('Canal', channel, true)
+      .addField('Duração', video.duration, true)
+      .addField('Estimado tocar em', 'Teste', true)
+      .addField('Posição na fila', message.guild.musicData.queue.length);
   }
 };

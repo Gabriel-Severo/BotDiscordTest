@@ -1,4 +1,5 @@
 {
   "notonchannel": "**:x: Você não está em nenhum canal de voz para usar esse comando.**",
-  "privateerror": "**:x: Essa playlist não existe ou está privada**"
+  "playlisterror": "**:x: Essa playlist não existe ou está privada**",
+  "videoserror": "Há um erro em obter os vídeos"
 }
