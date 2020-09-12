@@ -40,7 +40,10 @@ module.exports = class QueueCommand extends Command {
       );
 
     let description = '';
-    if (message.guild.musicData.queue.length == 0) {
+    if (
+      message.guild.musicData.queue.length == 0 &&
+      message.guild.musicData.nowPlaying == null
+    ) {
       description += '__Tocando agora:__';
       description += '\nNada, vamos começar a festa!:tada:';
       queueEmbed.setDescription(description);
@@ -51,7 +54,9 @@ module.exports = class QueueCommand extends Command {
       description += '__Tocando agora:__';
       const nowPlaying = message.guild.musicData.nowPlaying;
       description += `\n[${nowPlaying.title}](${nowPlaying.url}) \`${nowPlaying.duration} | Requisitado por: ${message.author.username}#${message.author.discriminator}\`\n`;
-      description += '\n__A seguir:__';
+      if (message.guild.musicData.queue.length > 0) {
+        description += '\n__A seguir:__';
+      }
     }
 
     let musics;

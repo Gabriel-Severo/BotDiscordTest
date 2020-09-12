@@ -164,9 +164,10 @@ module.exports = class PlayCommand extends Command {
     voiceChannel
       .join()
       .then((connection) => {
+        const nowPlaying = message.guild.musicData.nowPlaying;
         const dispatcher = connection
           .play(
-            ytdl(queue[0].url, {
+            ytdl(nowPlaying.url, {
               filter: 'audioonly',
               quality: 'highestaudio',
               highWaterMark: 1 << 25
