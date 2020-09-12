@@ -1,12 +1,15 @@
 class Contador {
-  constructor(data) {
-    this.data = data;
+  constructor(date) {
+    this.date = date;
+    this.timeObj;
   }
   getTime() {
-    const date = new Date(Date.UTC(2020, 10, 29, 16, 0, 0));
+    return this.timeObj;
+  }
+  calculateTime() {
     const dateToday = new Date();
-    const diferenca = date - dateToday;
-    return {
+    const diferenca = this.date - dateToday;
+    this.timeObj = {
       segundos: Math.floor(diferenca / 1000),
       minutos: Math.floor(diferenca / (1000 * 60)),
       horas: Math.floor(diferenca / (1000 * 3600)),
@@ -19,11 +22,14 @@ class Contador {
 
 module.exports = async function contar(client) {
   try {
-    const channel = await client.channels.cache.get('739876600656429178');
-    const message = await channel.messages.fetch();
+    let channel = await client.channels.cache.get('739876600656429178');
+    let message = await channel.messages.fetch();
     const mensagem = message.get('741444453427839006');
+
     const contador = new Contador(new Date(Date.UTC(2020, 10, 29, 16, 0, 0)));
-    for (;;) {
+    channel = message = null;
+    setInterval(() => {
+      contador.calculateTime();
       mensagem.edit(`=-=-=-=-=-=-=-=-  Tempo restante  -=-=-=-=-=-=-=-=
                                     ${contador.getTime().segundos} segundos
                             ${contador.getTime().minutos} minutos e ${
@@ -48,12 +54,7 @@ module.exports = async function contar(client) {
         contador.getTime().minutos % 60
       } minutos e ${contador.getTime().segundos % 60} segundos
             `);
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 1000);
-      });
-    }
+    }, 1000);
   } catch (e) {
     console.log(e);
   }
