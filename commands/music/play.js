@@ -63,7 +63,7 @@ module.exports = class PlayCommand extends Command {
           );
         }
       }
-      
+
       const queue = message.guild.musicData.queue;
       if (!message.guild.musicData.isPlaying) {
         await youtube.getVideo(queue[0].url).then((video) => {
@@ -162,9 +162,9 @@ module.exports = class PlayCommand extends Command {
 
     const voiceChannel = message.member.voice.channel;
     voiceChannel
-    .join()
-    .then((connection) => {
-      const dispatcher = connection
+      .join()
+      .then((connection) => {
+        const dispatcher = connection
           .play(
             ytdl(queue[0].url, {
               filter: 'audioonly',
@@ -254,7 +254,7 @@ module.exports = class PlayCommand extends Command {
       )
       .setThumbnail(videoObj[0].thumbnails.high.url)
       .addField('Estimado até tocar', estimated == 0 ? 'Agora' : estimated)
-      .addField('Posição na fila', position == 0 ? 'Agora' : (position + 1), true)
+      .addField('Posição na fila', position == 0 ? 'Agora' : position + 1, true)
       .addField('Adicionadas', `\`${videoObj.length}\` músicas`, true);
   }
 
