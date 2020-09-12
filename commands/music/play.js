@@ -44,11 +44,8 @@ module.exports = class PlayCommand extends Command {
       );
       try {
         playlist = await youtube.getPlaylist(query);
-      } catch (e) {
-        console.log(e.errors[0]);
-        return message.say(
-          `**:bug: Erro ao procurar:** \`${e.errors[0].reason}\``
-        );
+      } catch {
+        return message.say(pt_br.playlisterror);
       }
 
       const videoObj = await playlist.getVideos().catch(() => {
@@ -66,8 +63,13 @@ module.exports = class PlayCommand extends Command {
           );
         }
       }
-
+      
+      const queue = message.guild.musicData.queue;
       if (!message.guild.musicData.isPlaying) {
+        await youtube.getVideo(queue[0].url).then((video) => {
+          queue[0].duration = PlayCommand.formatDuration(video.duration);
+          queue[0].rawDuration = video.duration;
+        });
         message.guild.musicData.isPlaying = true;
         PlayCommand.playSong(message.guild.musicData.queue, message);
       }
@@ -81,13 +83,10 @@ module.exports = class PlayCommand extends Command {
       );
       message.say(PlaylistEmbed);
 
-      const queue = message.guild.musicData.queue;
       for (let i = 0; i < queue.length; i++) {
         await youtube.getVideo(queue[i].url).then((video) => {
           queue[i].duration = PlayCommand.formatDuration(video.duration);
           queue[i].rawDuration = video.duration;
-          console.log(queue[i].duration, queue[i].title)
-          console.log(queue[i].rawDuration)
         });
       }
     } else if (
@@ -158,11 +157,14 @@ module.exports = class PlayCommand extends Command {
     }
   }
   static playSong(queue, message) {
+    message.guild.musicData.nowPlaying = queue[0];
+    queue.shift();
+
     const voiceChannel = message.member.voice.channel;
     voiceChannel
-      .join()
-      .then((connection) => {
-        const dispatcher = connection
+    .join()
+    .then((connection) => {
+      const dispatcher = connection
           .play(
             ytdl(queue[0].url, {
               filter: 'audioonly',
@@ -174,8 +176,7 @@ module.exports = class PlayCommand extends Command {
           .on('start', () => {
             message.guild.musicData.songDispatcher = dispatcher;
             dispatcher.setVolume(message.guild.musicData.volume);
-            message.guild.musicData.nowPlaying = queue[0];
-            return queue.shift();
+            return;
           })
           .on('finish', () => {
             const guildQueue = message.guild.musicData.queue;

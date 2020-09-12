@@ -5,6 +5,7 @@ module.exports = class NowPlayingCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'nowplaying',
+      aliases: ['np'],
       group: 'music',
       memberName: 'nowplaying',
       description: 'Mostra a música que está tocando'

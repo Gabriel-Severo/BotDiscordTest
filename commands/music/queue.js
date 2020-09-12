@@ -55,7 +55,7 @@ module.exports = class QueueCommand extends Command {
       const inicial = (allPages - 1) * 10;
       musics = message.guild.musicData.queue.slice(inicial, total);
       for (let i = 0; i < musics.length; i++) {
-        description += `\n\`${(page - 1) * 10 + i + 1}\`. [${musics[i].title}](${musics[i].url}) \`${musics[i].duration} | Requisitado por: ${message.author.username}#${message.author.discriminator}\`\n`
+        description += `\n\`${(page - 1) * 10 + i + 1}\`. [${musics[i].title}](${musics[i].url}) | \`${musics[i].duration} Requisitado por: ${message.author.username}#${message.author.discriminator}\`\n`
       }
     } else {
       musics = message.guild.musicData.queue.slice(
@@ -63,7 +63,7 @@ module.exports = class QueueCommand extends Command {
         (page - 1) * 10 + 10
       );
       for (let i = 0; i < musics.length; i++) {
-        description += `\n\`${(page - 1) * 10 + i + 1}\`. [${musics[i].title}](${musics[i].url}) \`${musics[i].duration} Requisitado por: ${message.author.username}#${message.author.discriminator}\`\n`
+        description += `\n\`${(page - 1) * 10 + i + 1}\`. [${musics[i].title}](${musics[i].url}) | \`${musics[i].duration} Requisitado por: ${message.author.username}#${message.author.discriminator}\`\n`
       }
     }
     queueEmbed.setDescription(description)
