@@ -83,9 +83,11 @@ module.exports = class PlayCommand extends Command {
 
       const queue = message.guild.musicData.queue;
       for (let i = 0; i < queue.length; i++) {
-        youtube.getVideo(queue[i].url).then((video) => {
+        await youtube.getVideo(queue[i].url).then((video) => {
           queue[i].duration = PlayCommand.formatDuration(video.duration);
           queue[i].rawDuration = video.duration;
+          console.log(queue[i].duration, queue[i].title)
+          console.log(queue[i].rawDuration)
         });
       }
     } else if (
@@ -251,7 +253,7 @@ module.exports = class PlayCommand extends Command {
       )
       .setThumbnail(videoObj[0].thumbnails.high.url)
       .addField('Estimado até tocar', estimated == 0 ? 'Agora' : estimated)
-      .addField('Posição na fila', position == 0 ? 'Agora' : position, true)
+      .addField('Posição na fila', position == 0 ? 'Agora' : (position + 1), true)
       .addField('Adicionadas', `\`${videoObj.length}\` músicas`, true);
   }
 
