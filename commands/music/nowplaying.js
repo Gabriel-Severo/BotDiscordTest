@@ -63,7 +63,7 @@ module.exports = class NowPlayingCommand extends Command {
       else if (key == 'minutes')
         totalDurationInMS += totalDurationObj[key] * 60000;
       else if (key == 'seconds')
-        totalDurationInMS += totalDurationObj[key] * 100;
+        totalDurationInMS += totalDurationObj[key] * 1000;
     });
 
     const playBackBarLocation = Math.round(

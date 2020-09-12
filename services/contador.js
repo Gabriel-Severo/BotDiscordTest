@@ -2,8 +2,8 @@ module.exports = async function contar(client) {
   try {
     const channel = await client.channels.cache.get('739876600656429178');
     const message = await channel.messages.fetch();
-    const mensagem = message.first();
-    setInterval(() => {
+    const mensagem = message.get('741444453427839006');
+    for (;;) {
       const final = new Date(Date.UTC(2020, 10, 29, 16, 0, 0));
       const dia = new Date();
       const diferenca = final - dia;
@@ -33,7 +33,12 @@ module.exports = async function contar(client) {
         obj.horas % 24
       } horas, ${obj.minutos % 60} minutos e ${obj.segundos % 60} segundos
             `);
-    }, 1000);
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      });
+    }
   } catch (e) {
     console.log(e);
   }

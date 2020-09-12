@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "pretest": "eslint --ignore-path .gitignore .",
+    "prettier": "npx prettier --write ."
   },
   "repository": {
     "type": "git",
