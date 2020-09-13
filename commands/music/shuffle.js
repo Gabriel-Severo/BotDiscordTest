@@ -16,21 +16,12 @@ module.exports = class ShuffleCommand extends Command {
       return message.say(pt_br.notonchannel);
     }
 
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      return message.say('Não há nenhuma música tocando no momento');
-    }
-
     if (message.guild.musicData.queue.length < 1) {
-      return message.say('Não há nenhuma música na fila');
+      return message.say(pt_br.nomusicplayinginqueue);
     }
 
     ShuffleCommand.shuffleQueue(message.guild.musicData.queue);
-    return message.say(
-      `${message.guild.musicData.queue.length} músicas foram embaralhadas`
-    );
+    return message.say(`**Fila embaralhada :ok_hand:**`);
   }
   static shuffleQueue(queue) {
     for (let i = queue.length - 1; i > 0; i--) {

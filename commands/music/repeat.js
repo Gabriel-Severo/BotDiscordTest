@@ -7,38 +7,31 @@ module.exports = class RepeatCommand extends Command {
       name: 'repeat',
       group: 'music',
       memberName: 'repeat',
-      description: 'Repete uma música quantas vezes for informada',
-      args: [
-        {
-          key: 'number',
-          default: 1,
-          type: 'integer',
-          prompt:
-            'Quantas vezes você gostaria de repetir essa música (máximo 5)?',
-          validate: function (number) {
-            return number > 0 && number <= 20;
-          }
-        }
-      ]
+      description: 'Repete a música mais uma vez'
     });
   }
-  run(message, { number }) {
+  run(message) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       return message.say(pt_br.notonchannel);
+    }
+    if (!message.guild.me.voice.channel) {
+      return message.say(pt_br.botnotonchannel);
     }
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.say('Não há nenhuma música tocando');
+      return message.say(pt_br.nomusicplaying);
     }
-
-    const nowPlaying = message.guild.musicData.nowPlaying;
-    for (let i = 0; i < number; i++) {
-      message.guild.musicData.queue.push(nowPlaying);
+    if (message.guild.musicData.repeat) {
+      message.guild.musicData.repeat = false;
+      message.guild.musicData.repeated = false;
+      return message.say(':repeat_one: **Desativado!**');
+    } else {
+      message.guild.musicData.repeat = true;
+      return message.say(':repeat_one: **Ativado!**');
     }
-    return message.say(`A ${nowPlaying.title} repetirá ${number} vezes`);
   }
 };

@@ -18,20 +18,17 @@ module.exports = class RemoveCommand extends Command {
     });
   }
   run(message, { songNumber }) {
+    if (!message.guild.me.voice.channel) {
+      return message.say(pt_br.botnotonchannel);
+    }
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       return message.say(pt_br.notonchannel);
     }
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      return message.say('Não há nenhuma música tocando');
-    }
-    if (songNumber < 1 || songNumber >= message.guild.musicData.queue.length) {
-      return message.reply('Essa música é inválida. Informe um música válida');
+    if (songNumber < 1 || songNumber > message.guild.musicData.queue.length) {
+      return message.say(':x: **A música que você tentou remover não existe**');
     }
     const removed = message.guild.musicData.queue.splice(songNumber - 1, 1)[0];
-    return message.say(`${removed.title} foi removida da fila`);
+    return message.say(`:white_check_mark: **Removido** \`${removed.title}\``);
   }
 };

@@ -11,7 +11,7 @@ module.exports = class SkipCommand extends Command {
     });
   }
 
-  run(message) {
+  async run(message) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       return message.say(pt_br.notonchannel);
@@ -21,12 +21,18 @@ module.exports = class SkipCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.say('Não há nenhuma música na fila');
+      return message.say(pt_br.nomusicplaying);
     }
-    message.say(`${message.guild.musicData.nowPlaying.title} foi pulada`);
-    message.guild.musicData.songDispatcher.end();
+    message.say(`**:fast_forward: Pulada :thumbsup:**`);
+    if (message.guild.musicData.songDispatcher.paused) {
+      await message.guild.musicData.songDispatcher.resume();
+      message.guild.musicData.songDispatcher.end();
+    } else {
+      message.guild.musicData.songDispatcher.end();
+    }
     if (message.guild.musicData.looping) {
       message.guild.musicData.nowPlaying = null;
     }
+    message.guild.musicData.repeated = false;
   }
 };

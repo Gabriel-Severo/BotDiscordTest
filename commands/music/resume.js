@@ -21,14 +21,14 @@ module.exports = class ResumeCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.say('Não há nenhuma música tocando');
+      return message.say(pt_br.nomusicplaying);
     }
 
     if (!message.guild.musicData.songDispatcher.paused) {
-      return message.say('A música não está pausada');
+      return message.say(':x: **A música não está pausada**');
     }
 
-    message.say('Música retomada :play_pause:');
+    message.say(':play_pause: **Resumindo** :thumbsup:');
     message.guild.musicData.songDispatcher.resume();
   }
 };

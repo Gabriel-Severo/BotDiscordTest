@@ -183,9 +183,19 @@ module.exports = class PlayCommand extends Command {
             const guildQueue = message.guild.musicData.queue;
             if (
               message.guild.musicData.looping &&
-              !message.guild.musicData.nowPlaying == null
+              message.guild.musicData.nowPlaying != null
             ) {
-              return guildQueue.unshift(message.guild.musicData.nowPlaying);
+              guildQueue.unshift(message.guild.musicData.nowPlaying);
+            } else if (
+              message.guild.musicData.repeat &&
+              message.guild.musicData.nowPlaying != null
+            ) {
+              if (!message.guild.musicData.repeated) {
+                guildQueue.unshift(message.guild.musicData.nowPlaying);
+                message.guild.musicData.repeated = true;
+              } else {
+                message.guild.musicData.repeated = false;
+              }
             }
             if (guildQueue.length >= 1) {
               return this.playSong(guildQueue, message);

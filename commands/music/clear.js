@@ -11,15 +11,18 @@ module.exports = class ClearCommando extends Command {
     });
   }
   run(message) {
+    if (!message.guild.me.voice.channel) {
+      return message.say(pt_br.botnotonchannel);
+    }
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       return message.say(pt_br.notonchannel);
     }
     if (message.guild.musicData.queue.length == 0) {
-      return message.say('Não há nenhuma música na fila');
+      return message.say(pt_br.nomusicplayinginqueue);
     }
     message.guild.musicData.queue = [];
     message.guild.musicData.queue.length = 0;
-    return message.say('Fila limpa!');
+    return message.say(':boom: **Limpada...** :stop_button:');
   }
 };

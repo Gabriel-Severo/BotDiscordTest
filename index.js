@@ -14,7 +14,9 @@ Structures.extend('Guild', (Guild) => {
         nowPlaying: null,
         songDispatcher: null,
         looping: false,
-        volume: 0.5
+        volume: 0.5,
+        repeat: false,
+        repeated: false
       };
     }
   }

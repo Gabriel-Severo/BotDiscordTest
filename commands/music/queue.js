@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
+const pt_br = require('../../language/pt_br.json');
 
 module.exports = class QueueCommand extends Command {
   constructor(client) {
@@ -23,9 +24,7 @@ module.exports = class QueueCommand extends Command {
   }
   run(message, { page }) {
     if (!message.guild.me.voice.channel) {
-      return message.say(
-        ':x:**Eu não estou conectado a nenhum canal de voz**, use o comando join para me colocar em um'
-      );
+      return message.say(pt_br.botnotonchannel);
     }
     const allPages = Math.ceil(message.guild.musicData.queue.length / 10);
     if (message.guild.musicData.queue.length < 10 || allPages < page) {

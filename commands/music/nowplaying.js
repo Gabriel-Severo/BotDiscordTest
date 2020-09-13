@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
+const pt_br = require('../../language/pt_br.json');
 
 module.exports = class NowPlayingCommand extends Command {
   constructor(client) {
@@ -17,7 +18,7 @@ module.exports = class NowPlayingCommand extends Command {
       !message.guild.musicData.isPlaying &&
       !message.guild.musicData.nowPlaying
     ) {
-      return message.say('Não há nenhuma música tocando no momento');
+      return message.say(pt_br.nomusicplaying);
     }
 
     const video = message.guild.musicData.nowPlaying;
@@ -30,7 +31,7 @@ module.exports = class NowPlayingCommand extends Command {
         description = NowPlayingCommand.playbackBar(message, video);
       }
     } catch (e) {
-      return message.say('Não há nenhuma música tocando no momento');
+      return message.say(pt_br.nomusicplaying);
     }
 
     const messageEmbed = new MessageEmbed()

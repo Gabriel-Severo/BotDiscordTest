@@ -20,7 +20,7 @@ module.exports = class LoopCommando extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.say('Não há nenhuma música tocando');
+      return message.say(pt_br.nomusicplaying);
     }
 
     if (message.guild.musicData.looping) {

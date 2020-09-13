@@ -22,14 +22,14 @@ module.exports = class PauseCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.say('Não há nenhuma música tocando');
+      return message.say(pt_br.nomusicplaying);
     }
 
     if (message.guild.musicData.songDispatcher.paused) {
-      return message.say('A música já está pausada');
+      return message.say(':x: **A música já está pausada**');
     }
 
-    message.say('Música pausada :pause_button:');
+    message.say('**Pausada** :pause_button:');
     message.guild.musicData.songDispatcher.pause();
   }
 };

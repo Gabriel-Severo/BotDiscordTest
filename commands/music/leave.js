@@ -26,8 +26,10 @@ module.exports = class LeaveCommand extends Command {
       message.guild.musicData.queue = [];
       message.guild.musicData.songDispatcher.end();
     } else if (!message.guild.me.voice.channel) {
-      return message.say('Não estou conectado a nenhum canal');
+      return message.say(pt_br.botnotonchannel);
     }
+
+    message.say(':mailbox_with_no_mail: **Desconectado com sucesso**');
 
     message.guild.me.voice.channel.leave();
   }

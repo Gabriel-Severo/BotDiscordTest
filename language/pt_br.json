@@ -1,5 +1,8 @@
 {
   "notonchannel": "**:x: Você não está em nenhum canal de voz para usar esse comando.**",
+  "botnotonchannel": ":x:**Eu não estou conectado a nenhum canal de voz**, use o comando join para me colocar em um",
   "playlisterror": "**:x: Essa playlist não existe ou está privada**",
-  "videoserror": "Há um erro em obter os vídeos"
+  "videoserror": "Há um erro em obter os vídeos",
+  "nomusicplaying": ":x: **Não há nenhuma música tocando**",
+  "nomusicplayinginqueue": ":x: **Não há nenhuma música na fila**"
 }
