@@ -32,10 +32,10 @@ module.exports = function contar(client) {
   setInterval(() => {
     contador.calculateTime();
     client.channels.cache
-      .get('754322882506653756')
+      .get('739876600656429178')
       .messages.fetch()
       .then((message) => {
-        message.get('754323027780567091')
+        message.get('741444453427839006')
           .edit(`=-=-=-=-=-=-=-=-  Tempo restante  -=-=-=-=-=-=-=-=
       \t\t\t\t\t\t\t\t${contador.getSeconds()} segundos
       \t\t\t\t\t\t${contador.getMinutes()} minutos e ${

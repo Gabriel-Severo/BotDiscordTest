@@ -47,6 +47,7 @@ module.exports = class PlayCommand extends Command {
       } catch {
         return message.say(pt_br.playlisterror);
       }
+      console.log(playlist)
 
       const videoObj = await playlist.getVideos().catch(() => {
         console.log(pt_br.videoserror);
@@ -98,6 +99,7 @@ module.exports = class PlayCommand extends Command {
       youtube
         .getVideo(query)
         .then((video) => {
+          console.log(video)
           message.guild.musicData.queue.push(
             PlayCommand.constructSongObj(video)
           );
