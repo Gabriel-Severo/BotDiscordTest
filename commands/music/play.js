@@ -11,11 +11,11 @@ module.exports = class PlayCommand extends Command {
       name: 'play',
       group: 'music',
       memberName: 'play',
-      description: 'Play a song',
+      description: 'Toca uma música ou uma playlist',
       args: [
         {
           key: 'query',
-          prompt: 'What song or playlist would you like to listen to?',
+          prompt: 'Qual música você gostaria de ouvir?',
           type: 'string',
           validate: function (query) {
             return query.length > 0 && query.length < 200;
@@ -142,27 +142,19 @@ module.exports = class PlayCommand extends Command {
             if (guildQueue.length >= 1) {
               return this.playSong(guildQueue, message);
             } else {
-              message.guild.musicData.isPlaying = false;
-              message.guild.musicData.nowPlaying = null;
-              message.guild.musicData.songDispatcher = null;
-              if (message.guild.me.voice.channel) {
-                return message.guild.me.voice.channel.leave();
-              }
+              PlayCommand.finishQueue(message)
             }
           })
           .on('error', (e) => {
             message.say('Cannot play song');
             console.error(e);
-            message.guild.musicData.queue.length = 0;
-            message.guild.musicData.isPlaying = false;
-            message.guild.musicData.nowPlaying = null;
-            message.guild.musicData.songDispatcher = null;
-            return message.guild.me.voice.channel.leave();
+            PlayCommand.finishQueue(message)
           });
       })
       .catch((e) => {
-        console.log(e);
-        return message.guild.me.voice.channel.leave();
+        message.say('Cannot play song');
+        console.error(e);
+        PlayCommand.finishQueue(message)
       });
   }
 
@@ -175,7 +167,7 @@ module.exports = class PlayCommand extends Command {
         playlist.url
       )
       .setThumbnail(playlist.thumbnail)
-      .addField('Estimado até tocar', estimated == 0 ? 'Agora' : estimated)
+      .addField('Estimado até tocar', estimated === '0:00' ? 'Agora' : estimated)
       .addField('Posição na fila', position == 0 ? 'Agora' : position + 1, true)
       .addField('Adicionadas', `\`${playlist.videos.length}\` músicas`, true);
   }
@@ -189,7 +181,20 @@ module.exports = class PlayCommand extends Command {
       .setAuthor('Adicionada a fila', message.author.avatarURL())
       .addField('Canal', video.author, true)
       .addField('Duração', video.length, true)
-      .addField('Estimado tocar em', estimated == 0 ? 'Agora' : estimated, true)
+      .addField('Estimado tocar em', estimated == '0:00' ? 'Agora' : estimated, true)
       .addField('Posição na fila', message.guild.musicData.queue.length);
+  }
+  static finishQueue(message){
+    message.guild.musicData.isPlaying = false;
+    message.guild.musicData.nowPlaying = null;
+    message.guild.musicData.songDispatcher = null;
+    message.guild.musicData.looping = false;
+    message.guild.musicData.repeat = false;
+    message.guild.musicData.repeated = false;
+    message.guild.musicData.queue = []
+
+    if (message.guild.me.voice.channel) {
+      return message.guild.me.voice.channel.leave();
+    }
   }
 };

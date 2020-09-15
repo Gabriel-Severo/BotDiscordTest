@@ -12,7 +12,7 @@ function formatDuration(durationObj) {
   }:${seconds ? (seconds < 10 ? '0' + seconds : seconds) : '00'}`;
   return length;
 }
-function estimatedToPlay(message, nowPlaying=false) {
+function estimatedToPlay(message, nowPlaying = false) {
   let totalMS = 0;
   message.guild.musicData.queue.forEach((video) => {
     totalMS += video.duration.ms;
