@@ -1718,6 +1718,13 @@ simple-youtube-api@^5.2.1:
     iso8601-duration "^1.2.0"
     node-fetch "^2.6.0"
 
+simpleyt@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/simpleyt/-/simpleyt-1.0.5.tgz#0951caffb360c6408cc31b874fc39f5ef2ba0d16"
+  integrity sha512-oz/8GcK5wP9Tdopcrl2r4bK7TjYQ9N1ru6Nk0o5TRCBY9SEtacG+ZBzEIiiE2b+NrFKlACIP9lzk/ZDKK4oN0A==
+  dependencies:
+    miniget "^2.0.1"
+
 slice-ansi@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-2.1.0.tgz#cacd7693461a637a5788d92a7dd4fba068e81636"
@@ -2035,6 +2042,11 @@ yallist@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
+
+yt-playlist-scraper@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/yt-playlist-scraper/-/yt-playlist-scraper-1.0.1.tgz#e5a2ca2c805c3ed75b4091d2a6464e6412fb2203"
+  integrity sha512-fuxqTB5aEmc+yMq9/KJ+sAQ6a7I/OcO/8d4HlRzLuxoO6F9NRe5xS8Md6nTGOzN3cTM9rZVbaa3oxhhjD+3B2g==
 
 ytdl-core@^3.1.2:
   version "3.2.2"

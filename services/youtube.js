@@ -1,12 +1,13 @@
-const simpleYT = require("simpleyt");
-const playlists = require("yt-playlist-scraper");
-const url = require("url");
+const simpleYT = require('simpleyt');
+const playlists = require('yt-playlist-scraper');
+const url = require('url');
 
 function constructDurationObj(seconds) {
   return {
     hours: ~~(seconds / 3600),
     minutes: ~~((seconds % 3600) / 60),
     seconds: seconds % 60,
+    ms: seconds * 1000
   };
 }
 function constructVideoObj(video) {
@@ -17,7 +18,7 @@ function constructVideoObj(video) {
     thumbnail: video.thumbnails.slice(-1)[0].url,
     url: video.uri,
     duration,
-    length: formatDuration(duration),
+    length: formatDuration(duration)
   };
 }
 function constructPlaylistVideoObj(video) {
@@ -28,40 +29,40 @@ function constructPlaylistVideoObj(video) {
     thumbnail: video.thumbnails.best.url,
     url: `https://www.youtube.com/watch?v=${video.id}`,
     duration,
-    length: formatDuration(duration),
+    length: formatDuration(duration)
   };
 }
 function formatDuration(durationObj) {
   const { hours, minutes, seconds } = durationObj;
-  let length = "";
+  let length = '';
   length += `${
     hours < 1
       ? minutes
       : minutes
       ? minutes < 10
-        ? hours + ":0" + minutes
-        : hours + ":0" + minutes
-      : "00"
-  }:${seconds ? (seconds < 10 ? "0" + seconds : seconds) : "00"}`;
+        ? hours + ':0' + minutes
+        : hours + ':0' + minutes
+      : '00'
+  }:${seconds ? (seconds < 10 ? '0' + seconds : seconds) : '00'}`;
   return length;
 }
 module.exports = async function search(link) {
   const parsed = url.parse(link, true);
-  if (link.match("^https://www.youtube.com/.*?list=.*$")) {
+  if (link.match('^https://www.youtube.com/.*?list=.*$')) {
     const id = parsed.query.list;
     const playlist = await playlists(id);
     return {
-      url: "https://www.youtube.com/playlist?list=" + playlist.id,
+      url: 'https://www.youtube.com/playlist?list=' + playlist.id,
       thumbnail: playlist.thumbnails.best.url,
       title: playlist.title,
       videos: playlist.videos.map((video) => {
         return constructPlaylistVideoObj(video);
-      }),
+      })
     };
-  } else if (link.match("^(http(s)?://)?((w){3}.)?youtu(be|.be)?(.com)?/.+")) {
+  } else if (link.match('^(http(s)?://)?((w){3}.)?youtu(be|.be)?(.com)?/.+')) {
     const id = parsed.query.v;
     const videos = await simpleYT(id);
-    for (video of videos) {
+    for (let video of videos) {
       if (video.identifier == id) {
         return constructVideoObj(video);
       }

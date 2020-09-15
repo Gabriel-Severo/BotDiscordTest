@@ -1,11 +1,10 @@
-
 class Contador {
   constructor(date) {
     this.date = date;
     this.time = date - new Date();
   }
   calculateTime() {
-    this.time -= 3000;
+    this.time -= 5000;
   }
   getSeconds() {
     return Math.floor(this.time / 1000);
@@ -56,5 +55,5 @@ module.exports = async function contar(client) {
       contador.getMinutes() % 60
     } minutos e ${contador.getSeconds() % 60} segundos
           `);
-  }, 3000);
+  }, 5000);
 };

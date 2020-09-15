@@ -52,7 +52,7 @@ module.exports = class QueueCommand extends Command {
     if (page == 1) {
       description += '__Tocando agora:__';
       const nowPlaying = message.guild.musicData.nowPlaying;
-      description += `\n[${nowPlaying.title}](${nowPlaying.url}) \`${nowPlaying.duration} | Requisitado por: ${message.author.username}#${message.author.discriminator}\`\n`;
+      description += `\n[${nowPlaying.title}](${nowPlaying.url}) \`${nowPlaying.length} | Requisitado por: ${nowPlaying.requestedBy}\`\n`;
       if (message.guild.musicData.queue.length > 0) {
         description += '\n__A seguir:__';
       }
@@ -72,9 +72,7 @@ module.exports = class QueueCommand extends Command {
     for (let i = 0; i < musics.length; i++) {
       description += `\n\`${(page - 1) * 10 + i + 1}\`. [${musics[i].title}](${
         musics[i].url
-      }) | \`${musics[i].duration} Requisitado por: ${
-        message.author.username
-      }#${message.author.discriminator}\`\n`;
+      }) | \`${musics[i].length} Requisitado por: ${musics[i].requestedBy}\`\n`;
     }
     queueEmbed.setDescription(description);
     return message.say(queueEmbed);
