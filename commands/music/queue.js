@@ -75,8 +75,10 @@ module.exports = class QueueCommand extends Command {
         musics[i].url
       }) | \`${musics[i].length} Requisitado por: ${musics[i].requestedBy}\`\n`;
     }
-    const estimated = estimatedToPlay(message);
-    description += `\n**${message.guild.musicData.queue.length} músicas na fila | ${estimated} tempo total estimado**`;
+    if (message.guild.musicData.queue.length != 0) {
+      const estimated = estimatedToPlay(message);
+      description += `\n**${message.guild.musicData.queue.length} músicas na fila | ${estimated} tempo total estimado**`;
+    }
     queueEmbed.setDescription(description);
     return message.say(queueEmbed);
   }
