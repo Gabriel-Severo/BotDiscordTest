@@ -12,17 +12,17 @@ function formatDuration(durationObj) {
   }:${seconds ? (seconds < 10 ? '0' + seconds : seconds) : '00'}`;
   return length;
 }
-function estimatedToPlay(message) {
+function estimatedToPlay(message, nowPlaying=false) {
   let totalMS = 0;
   message.guild.musicData.queue.forEach((video) => {
     totalMS += video.duration.ms;
   });
 
-  if (message.guild.musicData.songDispatcher) {
+  if (message.guild.musicData.songDispatcher && nowPlaying) {
     const streamTime = message.guild.musicData.songDispatcher.streamTime;
-    const nowPlaying = message.guild.musicData.nowPlaying.duration.ms;
+    const nowPlayingTime = message.guild.musicData.nowPlaying.duration.ms;
 
-    totalMS += nowPlaying - streamTime;
+    totalMS += nowPlayingTime - streamTime;
   }
   const time = {
     seconds: ~~((totalMS / 1000) % 60),

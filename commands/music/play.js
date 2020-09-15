@@ -35,7 +35,7 @@ module.exports = class PlayCommand extends Command {
         `:thumbsup: **Conectado em** \`${voiceChannel.parent.name}\` :page_facing_up: **No canal** \`${voiceChannel.name}\` `
       );
     }
-    const estimated = estimatedToPlay(message);
+    const estimated = estimatedToPlay(message, true);
     const requestedBy = `${message.author.username}#${message.author.discriminator}`;
     if (query.match('^https://www.youtube.com/.*?list=.*$')) {
       message.say(
@@ -49,7 +49,6 @@ module.exports = class PlayCommand extends Command {
       for (let video of playlist.videos) {
         video.requestedBy = requestedBy;
         message.guild.musicData.queue.push(video);
-        console.log(video);
       }
 
       if (!message.guild.musicData.isPlaying) {
