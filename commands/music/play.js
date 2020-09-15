@@ -3,6 +3,7 @@ const ytdl = require('ytdl-core');
 const { MessageEmbed } = require('discord.js');
 const pt_br = require('../../language/pt_br.json');
 const youtube = require('../../services/youtube');
+const { estimatedToPlay } = require('../../services/util');
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -34,7 +35,7 @@ module.exports = class PlayCommand extends Command {
         `:thumbsup: **Conectado em** \`${voiceChannel.parent.name}\` :page_facing_up: **No canal** \`${voiceChannel.name}\` `
       );
     }
-    const estimated = PlayCommand.estimatedToPlay(message);
+    const estimated = estimatedToPlay(message);
     const requestedBy = `${message.author.username}#${message.author.discriminator}`;
     if (query.match('^https://www.youtube.com/.*?list=.*$')) {
       message.say(
@@ -48,6 +49,7 @@ module.exports = class PlayCommand extends Command {
       for (let video of playlist.videos) {
         video.requestedBy = requestedBy;
         message.guild.musicData.queue.push(video);
+        console.log(video);
       }
 
       if (!message.guild.musicData.isPlaying) {
@@ -165,18 +167,6 @@ module.exports = class PlayCommand extends Command {
       });
   }
 
-  static formatDuration(durationObj) {
-    return `${durationObj.hours ? durationObj.hours + ':' : ''}${
-      durationObj.minutes ? durationObj.minutes : '00'
-    }:${
-      durationObj.seconds < 10
-        ? '0' + durationObj.seconds
-        : durationObj.seconds
-        ? durationObj.seconds
-        : '00'
-    }`;
-  }
-
   static createPlaylistEmbed(message, playlist, position, estimated) {
     return new MessageEmbed()
       .setTitle(playlist.title)
@@ -202,25 +192,5 @@ module.exports = class PlayCommand extends Command {
       .addField('Duração', video.length, true)
       .addField('Estimado tocar em', estimated == 0 ? 'Agora' : estimated, true)
       .addField('Posição na fila', message.guild.musicData.queue.length);
-  }
-
-  static estimatedToPlay(message) {
-    let totalMS = 0;
-    message.guild.musicData.queue.forEach((video) => {
-      totalMS += video.duration.ms;
-    });
-
-    if (message.guild.musicData.songDispatcher) {
-      const streamTime = message.guild.musicData.songDispatcher.streamTime;
-      const nowPlaying = message.guild.musicData.nowPlaying.duration.ms;
-
-      totalMS += nowPlaying - streamTime;
-    }
-    const time = {
-      seconds: ~~((totalMS / 1000) % 60),
-      minutes: ~~((totalMS / (1000 * 60)) % 60),
-      hours: ~~((totalMS / (1000 * 3600)) % 24)
-    };
-    return this.formatDuration(time);
   }
 };

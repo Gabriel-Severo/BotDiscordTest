@@ -1,6 +1,7 @@
 const simpleYT = require('simpleyt');
 const playlists = require('yt-playlist-scraper');
 const url = require('url');
+const { formatDuration } = require('./util');
 
 function constructDurationObj(seconds) {
   return {
@@ -31,20 +32,6 @@ function constructPlaylistVideoObj(video) {
     duration,
     length: formatDuration(duration)
   };
-}
-function formatDuration(durationObj) {
-  const { hours, minutes, seconds } = durationObj;
-  let length = '';
-  length += `${
-    hours < 1
-      ? minutes
-      : minutes
-      ? minutes < 10
-        ? hours + ':0' + minutes
-        : hours + ':0' + minutes
-      : '00'
-  }:${seconds ? (seconds < 10 ? '0' + seconds : seconds) : '00'}`;
-  return length;
 }
 module.exports = async function search(link) {
   const parsed = url.parse(link, true);
