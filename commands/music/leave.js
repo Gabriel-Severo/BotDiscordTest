@@ -23,6 +23,9 @@ module.exports = class LeaveCommand extends Command {
         message.guild.musicData.songDispatcher == null
       )
     ) {
+      if (message.guild.musicData.looping) {
+        message.guild.musicData.nowPlaying = null;
+      }
       message.guild.musicData.queue = [];
       message.guild.musicData.songDispatcher.end();
     } else if (!message.guild.me.voice.channel) {

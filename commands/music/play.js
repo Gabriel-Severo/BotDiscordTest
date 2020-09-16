@@ -154,13 +154,13 @@ module.exports = class PlayCommand extends Command {
             }
           })
           .on('error', (e) => {
-            message.say('Cannot play song');
+            message.say('Cannot play song 1');
             console.error(e);
             PlayCommand.finishQueue(message);
           });
       })
       .catch((e) => {
-        message.say('Cannot play song');
+        message.say('Cannot play song 2');
         console.error(e);
         PlayCommand.finishQueue(message);
       });
