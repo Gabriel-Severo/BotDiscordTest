@@ -37,7 +37,13 @@ module.exports = async function search(link) {
   const parsed = url.parse(link, true);
   if (link.match('^https://www.youtube.com/.*?list=.*$')) {
     const id = parsed.query.list;
-    const playlist = await playlists(id);
+    let playlist
+    try{
+      playlist = await playlists(id);
+    }catch(e){
+      console.log(e)
+      return false
+    }
     return {
       url: 'https://www.youtube.com/playlist?list=' + playlist.id,
       thumbnail: playlist.thumbnails.best.url,
@@ -54,8 +60,12 @@ module.exports = async function search(link) {
         return constructVideoObj(video);
       }
     }
+    return false
   } else {
     const videos = await simpleYT(link);
+    if(videos == false){
+      return false
+    }
     return constructVideoObj(videos[0]);
   }
 };

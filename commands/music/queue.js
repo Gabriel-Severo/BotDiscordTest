@@ -53,7 +53,7 @@ module.exports = class QueueCommand extends Command {
     if (page == 1) {
       description += '__Tocando agora:__';
       const nowPlaying = message.guild.musicData.nowPlaying;
-      description += `\n[${nowPlaying.title}](${nowPlaying.url}) \`${nowPlaying.length} | Requisitado por: ${nowPlaying.requestedBy}\`\n`;
+      description += `\n[${nowPlaying.title}](${nowPlaying.url}) | \`${nowPlaying.length} Requisitado por: ${nowPlaying.requestedBy}\`\n`;
       if (message.guild.musicData.queue.length > 0) {
         description += '\n__A seguir:__';
       }
