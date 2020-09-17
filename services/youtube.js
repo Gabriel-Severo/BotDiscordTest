@@ -37,12 +37,11 @@ module.exports = async function search(link) {
   const parsed = url.parse(link, true);
   if (link.match('^https://www.youtube.com/.*?list=.*$')) {
     const id = parsed.query.list;
-    let playlist
-    try{
+    let playlist;
+    try {
       playlist = await playlists(id);
-    }catch(e){
-      console.log(e)
-      return false
+    } catch (e) {
+      return false;
     }
     return {
       url: 'https://www.youtube.com/playlist?list=' + playlist.id,
@@ -60,11 +59,11 @@ module.exports = async function search(link) {
         return constructVideoObj(video);
       }
     }
-    return false
+    return false;
   } else {
     const videos = await simpleYT(link);
-    if(videos == false){
-      return false
+    if (videos == false) {
+      return false;
     }
     return constructVideoObj(videos[0]);
   }

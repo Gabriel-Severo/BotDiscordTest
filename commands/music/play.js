@@ -43,8 +43,8 @@ module.exports = class PlayCommand extends Command {
       );
 
       const playlist = await youtube(query);
-      if (!playlist){
-        return message.say(":x: **Essa Playlist não existe ou está privada**")
+      if (!playlist) {
+        return message.say(':x: **Essa Playlist não existe ou está privada**');
       }
 
       const position = message.guild.musicData.queue.length;
@@ -63,7 +63,7 @@ module.exports = class PlayCommand extends Command {
         playlist,
         position,
         estimated
-        );
+      );
       message.say(PlaylistEmbed);
     } else if (
       query.match('^(http(s)?://)?((w){3}.)?youtu(be|.be)?(.com)?/.+')
@@ -72,8 +72,8 @@ module.exports = class PlayCommand extends Command {
         `<:youtube:753961795277815868> **Procurando por** :mag_right: \`${query}\``
       );
       const video = await youtube(query);
-      if(!video){
-        return message.say(":x: **Nada encontrado**")
+      if (!video) {
+        return message.say(':x: **Nada encontrado**');
       }
       video.requestedBy = requestedBy;
       message.guild.musicData.queue.push(video);
@@ -92,8 +92,8 @@ module.exports = class PlayCommand extends Command {
 
       let video = await youtube(query);
 
-      if(!video){
-        return message.say(":x: **Nada encontrado**")
+      if (!video) {
+        return message.say(':x: **Nada encontrado**');
       }
 
       video.requestedBy = requestedBy;
