@@ -63,19 +63,13 @@ module.exports = class NowPlayingCommand extends Command {
       totalDurationObj['minutes'] * 60000 +
       totalDurationObj['seconds'] * 1000;
 
-    const playBackBarLocation = Math.round(
-      (passedTimeInMS / totalDurationInMS) * 10
+    const playBackBarLocation = Math.floor(
+      ((passedTimeInMS / totalDurationInMS) * 100) / 3.3333333333
     );
 
     let playBack = '';
     for (let i = 0; i < 30; i++) {
-      if (playBackBarLocation == 0) {
-        playBack = '🔘▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬';
-        break;
-      } else if (playBackBarLocation == 10) {
-        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬🔘';
-        break;
-      } else if (i == playBackBarLocation * 3) {
+      if (i == playBackBarLocation) {
         playBack += '🔘';
       } else {
         playBack += '▬';
