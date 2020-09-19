@@ -1,6 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const pt_br = require('../../language/pt_br.json');
+const { formatDuration } = require('../../services/util');
 
 module.exports = class NowPlayingCommand extends Command {
   constructor(client) {
@@ -14,10 +15,10 @@ module.exports = class NowPlayingCommand extends Command {
   }
 
   run(message) {
-    if (
-      !message.guild.musicData.isPlaying &&
-      !message.guild.musicData.nowPlaying
-    ) {
+    if (!message.guild.me.voice.channel) {
+      return message.say(pt_br.botnotonchannel);
+    }
+    if (!message.guild.musicData.nowPlaying) {
       return message.say(pt_br.nomusicplaying);
     }
 
@@ -36,69 +37,51 @@ module.exports = class NowPlayingCommand extends Command {
 
     const messageEmbed = new MessageEmbed()
       .setThumbnail(video.thumbnail)
-      .setColor('#e9f931')
-      .setTitle(video.title)
+      .setAuthor(
+        'Tocando Agora ♪',
+        message.author.avatarURL(),
+        'https://google.com'
+      )
       .setDescription(description);
     message.say(messageEmbed);
   }
   static playbackBar(message, video) {
     const passedTimeInMS = message.guild.musicData.songDispatcher.streamTime;
-
     const timePassedInMSObj = {
       seconds: Math.floor((passedTimeInMS / 1000) % 60),
       minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),
       hours: Math.floor((passedTimeInMS / (1000 * 3600)) % 24)
     };
 
-    const timePassedInMSFormated = NowPlayingCommand.formatDuration(
-      timePassedInMSObj
-    );
+    const timePassedInMSFormated = formatDuration(timePassedInMSObj);
 
-    const totalDurationObj = video.rawDuration;
-    const totalDurationFormated = NowPlayingCommand.formatDuration(
-      totalDurationObj
-    );
+    const totalDurationObj = video.duration;
+    const totalDurationFormated = formatDuration(totalDurationObj);
 
-    let totalDurationInMS = 0;
-    Object.keys(totalDurationObj).forEach((key) => {
-      if (key == 'hours') totalDurationInMS += totalDurationObj[key] * 3600000;
-      else if (key == 'minutes')
-        totalDurationInMS += totalDurationObj[key] * 60000;
-      else if (key == 'seconds')
-        totalDurationInMS += totalDurationObj[key] * 1000;
-    });
+    let totalDurationInMS =
+      totalDurationObj['hours'] * 3600000 +
+      totalDurationObj['minutes'] * 60000 +
+      totalDurationObj['seconds'] * 1000;
 
     const playBackBarLocation = Math.round(
       (passedTimeInMS / totalDurationInMS) * 10
     );
 
     let playBack = '';
-    for (let i = 0; i < 21; i++) {
+    for (let i = 0; i < 30; i++) {
       if (playBackBarLocation == 0) {
-        playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬';
+        playBack = '🔘▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬';
         break;
       } else if (playBackBarLocation == 10) {
-        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:';
+        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬🔘';
         break;
-      } else if (i == playBackBarLocation * 2) {
-        playBack += ':musical_note:';
+      } else if (i == playBackBarLocation * 3) {
+        playBack += '🔘';
       } else {
         playBack += '▬';
       }
     }
 
-    return `${timePassedInMSFormated} ${playBack} ${totalDurationFormated}`;
-  }
-
-  static formatDuration(duration) {
-    return `${duration.hours ? duration.hours + ':' : ''}${
-      duration.minutes ? duration.minutes : '00'
-    }:${
-      duration.seconds < 10
-        ? '0' + duration.seconds
-        : duration.seconds
-        ? duration.seconds
-        : '00'
-    }`;
+    return `[${video.title}](${video.url})\n\n\`${playBack}\`\n\n\`${timePassedInMSFormated} / ${totalDurationFormated}\`\n\n\`Requisitado por:\` ${video.requestedBy}`;
   }
 };
