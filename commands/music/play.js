@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core-discord');
 const { MessageEmbed } = require('discord.js');
 const pt_br = require('../../language/pt_br.json');
 const youtube = require('../../services/youtube');
@@ -115,14 +115,15 @@ module.exports = class PlayCommand extends Command {
     const voiceChannel = message.member.voice.channel;
     voiceChannel
       .join()
-      .then((connection) => {
+      .then(async (connection) => {
         const nowPlaying = message.guild.musicData.nowPlaying;
         const dispatcher = connection
           .play(
-            ytdl(nowPlaying.url, {
+            await ytdl(nowPlaying.url, {
               filter: 'audioonly',
               quality: 'highestaudio'
-            })
+            }),
+            { type: 'opus' }
           )
           .on('start', () => {
             message.guild.musicData.songDispatcher = dispatcher;
@@ -154,9 +155,11 @@ module.exports = class PlayCommand extends Command {
             }
           })
           .on('error', (e) => {
-            message.say('Cannot play song 1');
+            message.say(
+              `:x: **Não consegui tocar a música: \`${message.guild.musicData.nowPlaying.title}\`**`
+            );
             console.error(e);
-            PlayCommand.finishQueue(message);
+            message.guild.musicData.songDispatcher.end();
           });
       })
       .catch((e) => {

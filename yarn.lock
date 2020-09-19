@@ -179,6 +179,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.31.tgz#fd3578fed25e5946372b06dab43eae49248367fa"
   integrity sha512-AiazLSnsm7GfTxr08GrqeqMxygR/yV78RDk5gaw+S7pOP70BIqUbTFl9vZRyUC/XubcwIqkiiHxbJNFAGvSoOw==
 
+"@types/node@^14.11.1":
+  version "14.11.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.11.1.tgz#56af902ad157e763f9ba63d671c39cda3193c835"
+  integrity sha512-oTQgnd0hblfLsJ6BvJzzSL+Inogp3lq9fGgqRkMB/ziKMgEUaFl801OncOzUmalfzt14N0oPHMK47ipl+wbTIw==
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -2030,12 +2035,21 @@ yallist@^4.0.0:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yt-playlist-scraper@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/yt-playlist-scraper/-/yt-playlist-scraper-1.0.2.tgz#27e57bed6d48ae5f8fce9c46711a6de2e5fa544c"
-  integrity sha512-/kOZyTlw5A5ODYJWJpoYVrQZ1AYQsFXDNzdvE8sOQ6IQJgOsgrO93u2lWbV/XUljAwdZkZIYUOGnI2zp5CcjaA==
+yt-playlist-scraper@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/yt-playlist-scraper/-/yt-playlist-scraper-1.0.4.tgz#7c86bfb017bc763bec4ea7291391b444435ff6ba"
+  integrity sha512-9Sm0TkbuhBbRT7XQEK3DD3Wlt8wc5tc1ZNvcnKLCTqjiv/HxKhtTfh9Qdmle/pDHmeMXsw7LbCugSFEGf4N1YQ==
 
-ytdl-core@^3.1.2:
+ytdl-core-discord@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/ytdl-core-discord/-/ytdl-core-discord-1.2.2.tgz#daff403bc2ac8652b70f7c76998bf3758a6c86cf"
+  integrity sha512-yhq469ZO9kfsZMe0ro1vgjw4+wlxGBedYjsPfm5M5I+9lShew3570Pcb+aTy2F9EIVGU/4OqoUovFzAs9oR/3Q==
+  dependencies:
+    "@types/node" "^14.11.1"
+    prism-media "^1.2.2"
+    ytdl-core "^3.2.2"
+
+ytdl-core@^3.1.2, ytdl-core@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/ytdl-core/-/ytdl-core-3.2.2.tgz#056eae00209410734f11046f8d7947d7e39514bf"
   integrity sha512-DVE7uhk4WYB2Op742QQVGE/b9G7cr9kSB3ZDpDXmyRPhO55h9u8gwORlDIHWKucWVmCsdsdKzNP89QylpJEgiw==
