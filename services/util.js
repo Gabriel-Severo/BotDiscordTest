@@ -1,3 +1,10 @@
+function timeMsToObj(ms) {
+  return {
+    seconds: ~~((ms / 1000) % 60),
+    minutes: ~~((ms / (1000 * 60)) % 60),
+    hours: ~~((ms / (1000 * 3600)) % 24)
+  };
+}
 function formatDuration(durationObj) {
   const { hours, minutes, seconds } = durationObj;
   let length = '';
@@ -24,14 +31,11 @@ function estimatedToPlay(message, nowPlaying = false) {
 
     totalMS += nowPlayingTime - streamTime;
   }
-  const time = {
-    seconds: ~~((totalMS / 1000) % 60),
-    minutes: ~~((totalMS / (1000 * 60)) % 60),
-    hours: ~~((totalMS / (1000 * 3600)) % 24)
-  };
+  const time = timeMsToObj(totalMS);
   return formatDuration(time);
 }
 module.exports = {
   estimatedToPlay,
-  formatDuration
+  formatDuration,
+  timeMsToObj
 };

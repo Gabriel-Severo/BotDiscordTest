@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const pt_br = require('../../language/pt_br.json');
-const { formatDuration } = require('../../services/util');
+const { formatDuration, timeMsToObj } = require('../../services/util');
 
 module.exports = class NowPlayingCommand extends Command {
   constructor(client) {
@@ -47,11 +47,7 @@ module.exports = class NowPlayingCommand extends Command {
   }
   static playbackBar(message, video) {
     const passedTimeInMS = message.guild.musicData.songDispatcher.streamTime;
-    const timePassedInMSObj = {
-      seconds: Math.floor((passedTimeInMS / 1000) % 60),
-      minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),
-      hours: Math.floor((passedTimeInMS / (1000 * 3600)) % 24)
-    };
+    const timePassedInMSObj = timeMsToObj(passedTimeInMS);
 
     const timePassedInMSFormated = formatDuration(timePassedInMSObj);
 
@@ -63,9 +59,7 @@ module.exports = class NowPlayingCommand extends Command {
       totalDurationObj['minutes'] * 60000 +
       totalDurationObj['seconds'] * 1000;
 
-    const playBackBarLocation = Math.floor(
-      ((passedTimeInMS / totalDurationInMS) * 100) / 3.3333333333
-    );
+    const playBackBarLocation = ~~(30 * (passedTimeInMS / totalDurationInMS));
 
     let playBack = '';
     for (let i = 0; i < 30; i++) {
