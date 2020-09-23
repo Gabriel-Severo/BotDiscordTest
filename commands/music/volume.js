@@ -13,14 +13,14 @@ module.exports = class VolumeCommand extends Command {
           key: 'wantedVolume',
           prompt: 'Qual o volume você gostaria de setar',
           type: 'integer',
-          validate: function (wantedVolume) {
-            return wantedVolume >= 0 && wantedVolume <= 200;
-          }
         }
       ]
     });
   }
   run(message, { wantedVolume }) {
+    if (!message.guild.me.voice.channel) {
+      return message.say(pt_br.botnotonchannel);
+    }
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       return message.say(pt_br.notonchannel);
@@ -29,7 +29,10 @@ module.exports = class VolumeCommand extends Command {
       message.guild.musicData.songDispatcher == null ||
       typeof message.guild.musicData.songDispatcher == 'undefined'
     ) {
-      return message.say('Não há nada tocando agora');
+      return message.say(pt_br.nomusicplaying);
+    }
+    if(wantedVolume < 0 || wantedVolume > 200){
+      return message.say(":x: **O volume informado é inválido**")
     }
     let volume = 0;
     if (!wantedVolume == 0) {
@@ -37,6 +40,6 @@ module.exports = class VolumeCommand extends Command {
     }
     message.guild.musicData.volume = volume;
     message.guild.musicData.songDispatcher.setVolume(volume);
-    message.say(`O volume foi setado para ${wantedVolume}%`);
+    message.say(`:white_check_mark: **O volume foi setado para ${wantedVolume}%**`);
   }
 };

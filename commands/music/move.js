@@ -31,7 +31,7 @@ module.exports = class MoveCommand extends Command {
     const queueLength = message.guild.musicData.queue.length;
     if (queueLength < 2) {
       return message.say(
-        ':x: **Não há música suficientes na fila para executar esse comando**'
+        ':x: **Não há músicas suficientes na fila para executar esse comando**'
       );
     }
     if (
