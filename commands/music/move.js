@@ -30,9 +30,7 @@ module.exports = class MoveCommand extends Command {
     }
     const queueLength = message.guild.musicData.queue.length;
     if (queueLength < 2) {
-      return message.say(
-        ':x: **Não há músicas suficientes na fila para executar esse comando**'
-      );
+      return message.say(pt_br.notenoughmusic);
     }
     if (
       oldPosition < 1 ||
@@ -41,14 +39,12 @@ module.exports = class MoveCommand extends Command {
       newPosition > queueLength ||
       newPosition == oldPosition
     ) {
-      return message.say(
-        ':x: **Você cometeu algum erro ao digitar esse comando**'
-      );
+      return message.say(pt_br.invalidposition);
     }
     const music = message.guild.musicData.queue.splice(oldPosition - 1, 1)[0];
     message.guild.musicData.queue.splice(newPosition - 1, 0, music);
     return message.say(
-      `:white_check_mark: **Movida \`${music.title}\` para a posição ${newPosition}**`
+      pt_br.movedmusic.replace('{0}', music.title).replace('{1}', newPosition)
     );
   }
 };

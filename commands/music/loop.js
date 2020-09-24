@@ -24,10 +24,10 @@ module.exports = class LoopCommando extends Command {
     }
 
     if (message.guild.musicData.looping) {
-      message.say(':repeat_one: **Desativado!**');
+      message.say(pt_br.loopoff);
       message.guild.musicData.looping = false;
     } else {
-      message.say(':repeat_one: **Ativado!**');
+      message.say(pt_br.loopon);
       message.guild.musicData.looping = true;
     }
   }

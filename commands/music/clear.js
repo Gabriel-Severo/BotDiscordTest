@@ -23,6 +23,6 @@ module.exports = class ClearCommando extends Command {
     }
     message.guild.musicData.queue = [];
     message.guild.musicData.queue.length = 0;
-    return message.say(':boom: **Limpada...** :stop_button:');
+    return message.say(pt_br.clearqueue);
   }
 };

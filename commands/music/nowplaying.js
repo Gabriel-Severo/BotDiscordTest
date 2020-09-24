@@ -38,7 +38,7 @@ module.exports = class NowPlayingCommand extends Command {
     const messageEmbed = new MessageEmbed()
       .setThumbnail(video.thumbnail)
       .setAuthor(
-        'Tocando Agora ♪',
+        pt_br.playingnow,
         message.author.avatarURL(),
         'https://google.com'
       )
@@ -70,6 +70,12 @@ module.exports = class NowPlayingCommand extends Command {
       }
     }
 
-    return `[${video.title}](${video.url})\n\n\`${playBack}\`\n\n\`${timePassedInMSFormated} / ${totalDurationFormated}\`\n\n\`Requisitado por:\` ${video.requestedBy}`;
+    return pt_br.nowplayingdescription
+      .replace('{0}', video.title)
+      .replace('{1}', video.url)
+      .replace('{2}', playBack)
+      .replace('{3}', timePassedInMSFormated)
+      .replace('{4}', totalDurationFormated)
+      .replace('{5}', video.requestedBy);
   }
 };

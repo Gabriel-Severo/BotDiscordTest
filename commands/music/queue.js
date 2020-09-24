@@ -32,7 +32,7 @@ module.exports = class QueueCommand extends Command {
       page = 1;
     }
     const queueEmbed = new MessageEmbed()
-      .setTitle(`Fila para ${message.guild.name}`)
+      .setTitle(pt_br.queuefor.replace("{0}", message.guild.name))
       .setURL('https://www.google.com')
       .setFooter(
         `Página ${page}/${allPages == 0 ? 1 : allPages}`,

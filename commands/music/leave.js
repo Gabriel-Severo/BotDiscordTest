@@ -32,7 +32,7 @@ module.exports = class LeaveCommand extends Command {
       return message.say(pt_br.botnotonchannel);
     }
 
-    message.say(':mailbox_with_no_mail: **Desconectado com sucesso**');
+    message.say(pt_br.leavechannel);
 
     message.guild.me.voice.channel.leave();
   }

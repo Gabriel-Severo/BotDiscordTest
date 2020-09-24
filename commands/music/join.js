@@ -16,7 +16,9 @@ module.exports = class JoinCommand extends Command {
       return message.say(pt_br.notonchannel);
     }
     message.say(
-      `:thumbsup: **Conectado em** \`${voiceChannel.parent.name}\` :page_facing_up: **No canal** \`${voiceChannel.name}\` `
+      pt_br.joinchannel
+        .replace('{0}', voiceChannel.parent.name)
+        .replace('{1}', voiceChannel.name)
     );
 
     message.member.voice.channel.join();

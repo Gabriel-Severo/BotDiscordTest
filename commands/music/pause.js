@@ -26,10 +26,10 @@ module.exports = class PauseCommand extends Command {
     }
 
     if (message.guild.musicData.songDispatcher.paused) {
-      return message.say(':x: **A música já está pausada**');
+      return message.say(pt_br.musicalreadypaused);
     }
 
-    message.say('**Pausada** :pause_button:');
+    message.say(pt_br.paused);
     message.guild.musicData.songDispatcher.pause();
   }
 };

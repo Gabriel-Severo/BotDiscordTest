@@ -32,19 +32,19 @@ module.exports = class PlayCommand extends Command {
     }
     if (!message.guild.me.voice.channel) {
       message.say(
-        `:thumbsup: **Conectado em** \`${voiceChannel.parent.name}\` :page_facing_up: **No canal** \`${voiceChannel.name}\` `
+        pt_br.joinchannel
+          .replace('{0}', voiceChannel.parent.name)
+          .replace('{1}', voiceChannel.name)
       );
     }
     const estimated = estimatedToPlay(message, true);
     const requestedBy = `${message.author.username}#${message.author.discriminator}`;
     if (query.match('^https://www.youtube.com/.*?list=.*$')) {
-      message.say(
-        `<:youtube:753961795277815868> **Procurando por** :mag_right: \`${query}\``
-      );
+      message.say(pt_br.seekingmusic.replace('{0}', query));
 
       const playlist = await youtube(query);
       if (!playlist) {
-        return message.say(':x: **Essa Playlist não existe ou está privada**');
+        return message.say(pt_br.playlisterror);
       }
 
       const position = message.guild.musicData.queue.length;
@@ -68,32 +68,28 @@ module.exports = class PlayCommand extends Command {
     } else if (
       query.match('^(http(s)?://)?((w){3}.)?youtu(be|.be)?(.com)?/.+')
     ) {
-      message.say(
-        `<:youtube:753961795277815868> **Procurando por** :mag_right: \`${query}\``
-      );
+      message.say(pt_br.seekingmusic.replace('{0}', query));
       const video = await youtube(query);
       if (!video) {
-        return message.say(':x: **Nada encontrado**');
+        return message.say(pt_br.nothingfound);
       }
       video.requestedBy = requestedBy;
       message.guild.musicData.queue.push(video);
       if (!message.guild.musicData.isPlaying) {
         message.guild.musicData.isPlaying = true;
         PlayCommand.playSong(message.guild.musicData.queue, message);
-        message.say(`**Tocando** :notes: \`${video.title}\` - **Agora**!`);
+        message.say(pt_br.playingnowmusic.replace('{0}', video.title));
       } else {
         const queueEmbed = PlayCommand.createQueueEmbed(message, estimated);
         message.say(queueEmbed);
       }
     } else {
-      message.say(
-        `<:youtube:753961795277815868> **Procurando por** :mag_right: \`${query}\``
-      );
+      message.say(pt_br.seekingmusic.replace('{0}', query));
 
       let video = await youtube(query);
 
       if (!video) {
-        return message.say(':x: **Nada encontrado**');
+        return message.say(pt_br.nothingfound);
       }
 
       video.requestedBy = requestedBy;
@@ -101,7 +97,7 @@ module.exports = class PlayCommand extends Command {
       if (!message.guild.musicData.isPlaying) {
         message.guild.musicData.isPlaying = true;
         PlayCommand.playSong(message.guild.musicData.queue, message);
-        message.say(`**Tocando** :notes: \`${video.title}\` - **Agora**!`);
+        message.say(pt_br.playingnowmusic.replace('{0}', video.title));
       } else {
         const queueEmbed = PlayCommand.createQueueEmbed(message, estimated);
         message.say(queueEmbed);
@@ -156,7 +152,10 @@ module.exports = class PlayCommand extends Command {
           })
           .on('error', (e) => {
             message.say(
-              `:x: **Não consegui tocar a música: \`${message.guild.musicData.nowPlaying.title}\`**`
+              pt_br.cantplaythissong.replace(
+                '{0}',
+                message.guild.musicData.nowPlaying.title
+              )
             );
             console.error(e);
             message.guild.musicData.songDispatcher.end();
@@ -173,17 +172,25 @@ module.exports = class PlayCommand extends Command {
     return new MessageEmbed()
       .setTitle(playlist.title)
       .setAuthor(
-        'Playlist adicionada a fila',
+        pt_br.playlistaddedtext,
         message.author.avatarURL(),
         playlist.url
       )
       .setThumbnail(playlist.thumbnail)
       .addField(
-        'Estimado até tocar',
-        estimated === '0:00' ? 'Agora' : estimated
+        pt_br.estimatedtoplay,
+        estimated === '0:00' ? pt_br.nowtext : estimated
       )
-      .addField('Posição na fila', position == 0 ? 'Agora' : position + 1, true)
-      .addField('Adicionadas', `\`${playlist.videos.length}\` músicas`, true);
+      .addField(
+        pt_br.queuepositiontext,
+        position == 0 ? pt_br.nowtext : position + 1,
+        true
+      )
+      .addField(
+        pt_br.addedtext,
+        `\`${playlist.videos.length}\` ${pt_br.songstext}`,
+        true
+      );
   }
 
   static createQueueEmbed(message, estimated) {
@@ -192,15 +199,15 @@ module.exports = class PlayCommand extends Command {
       .setTitle(video.title)
       .setURL(video.url)
       .setThumbnail(video.thumbnail)
-      .setAuthor('Adicionada a fila', message.author.avatarURL())
-      .addField('Canal', video.author, true)
-      .addField('Duração', video.length, true)
+      .setAuthor(pt_br.addedtoqueuetext, message.author.avatarURL())
+      .addField(pt_br.channeltext, video.author, true)
+      .addField(pt_br.durationtext, video.length, true)
       .addField(
-        'Estimado tocar em',
-        estimated == '0:00' ? 'Agora' : estimated,
+        pt_br.estimatedtoplay,
+        estimated === '0:00' ? pt_br.nowtext : estimated,
         true
       )
-      .addField('Posição na fila', message.guild.musicData.queue.length);
+      .addField(pt_br.queuepositiontext, message.guild.musicData.queue.length);
   }
   static finishQueue(message) {
     message.guild.musicData.isPlaying = false;
