@@ -25,10 +25,10 @@ module.exports = class ResumeCommand extends Command {
     }
 
     if (!message.guild.musicData.songDispatcher.paused) {
-      return message.say(':x: **A música não está pausada**');
+      return message.say(pt_br.musicnotpaused);
     }
 
-    message.say(':play_pause: **Resumindo** :thumbsup:');
+    message.say(pt_br.musicresumed);
     message.guild.musicData.songDispatcher.resume();
   }
 };

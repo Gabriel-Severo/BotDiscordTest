@@ -32,7 +32,7 @@ module.exports = class VolumeCommand extends Command {
       return message.say(pt_br.nomusicplaying);
     }
     if (wantedVolume < 0 || wantedVolume > 200) {
-      return message.say(':x: **O volume informado é inválido**');
+      return message.say(pt_br.invalidvolume);
     }
     let volume = 0;
     if (!wantedVolume == 0) {
@@ -40,8 +40,6 @@ module.exports = class VolumeCommand extends Command {
     }
     message.guild.musicData.volume = volume;
     message.guild.musicData.songDispatcher.setVolume(volume);
-    message.say(
-      `:white_check_mark: **O volume foi setado para ${wantedVolume}%**`
-    );
+    message.say(pt_br.volumechanged.replace('{0}', wantedVolume));
   }
 };

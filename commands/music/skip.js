@@ -23,7 +23,7 @@ module.exports = class SkipCommand extends Command {
     ) {
       return message.say(pt_br.nomusicplaying);
     }
-    message.say(`**:fast_forward: Pulada :thumbsup:**`);
+    message.say(pt_br.skippedmusic);
     if (message.guild.musicData.songDispatcher.paused) {
       await message.guild.musicData.songDispatcher.resume();
       message.guild.musicData.songDispatcher.end();

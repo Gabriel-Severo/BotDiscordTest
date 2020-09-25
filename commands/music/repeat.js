@@ -28,10 +28,10 @@ module.exports = class RepeatCommand extends Command {
     if (message.guild.musicData.repeat) {
       message.guild.musicData.repeat = false;
       message.guild.musicData.repeated = false;
-      return message.say(':repeat_one: **Desativado!**');
+      return message.say(pt_br.loopoff);
     } else {
       message.guild.musicData.repeat = true;
-      return message.say(':repeat_one: **Ativado!**');
+      return message.say(pt_br.loopon);
     }
   }
 };

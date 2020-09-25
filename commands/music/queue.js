@@ -32,7 +32,7 @@ module.exports = class QueueCommand extends Command {
       page = 1;
     }
     const queueEmbed = new MessageEmbed()
-      .setTitle(pt_br.queuefor.replace("{0}", message.guild.name))
+      .setTitle(pt_br.queuefor.replace('{0}', message.guild.name))
       .setURL('https://www.google.com')
       .setFooter(
         `Página ${page}/${allPages == 0 ? 1 : allPages}`,
@@ -44,18 +44,18 @@ module.exports = class QueueCommand extends Command {
       message.guild.musicData.queue.length == 0 &&
       message.guild.musicData.nowPlaying == null
     ) {
-      description += '__Tocando agora:__';
-      description += '\nNada, vamos começar a festa!:tada:';
+      description += pt_br.playingnow2;
+      description += `\n${pt_br.startplaying}`;
       queueEmbed.setDescription(description);
       return message.say(queueEmbed);
     }
 
     if (page == 1) {
-      description += '__Tocando agora:__';
+      description += pt_br.playingnow2;
       const nowPlaying = message.guild.musicData.nowPlaying;
-      description += `\n[${nowPlaying.title}](${nowPlaying.url}) | \`${nowPlaying.length} Requisitado por: ${nowPlaying.requestedBy}\`\n`;
+      description += `\n[${nowPlaying.title}](${nowPlaying.url}) | \`${nowPlaying.length} ${pt_br.requestedby} ${nowPlaying.requestedBy}\`\n`;
       if (message.guild.musicData.queue.length > 0) {
-        description += '\n__A seguir:__';
+        description += `\n${pt_br.next}`;
       }
     }
 
@@ -73,11 +73,13 @@ module.exports = class QueueCommand extends Command {
     for (let i = 0; i < musics.length; i++) {
       description += `\n\`${(page - 1) * 10 + i + 1}\`. [${musics[i].title}](${
         musics[i].url
-      }) | \`${musics[i].length} Requisitado por: ${musics[i].requestedBy}\`\n`;
+      }) | \`${musics[i].length} ${pt_br.requestedby} ${
+        musics[i].requestedBy
+      }\`\n`;
     }
     if (message.guild.musicData.queue.length != 0) {
       const estimated = estimatedToPlay(message);
-      description += `\n**${message.guild.musicData.queue.length} músicas na fila | ${estimated} tempo total estimado**`;
+      description += `\n**${message.guild.musicData.queue.length} ${pt_br.queuedsongs} | ${estimated} ${pt_br.estimatedtime}**`;
     }
     queueEmbed.setDescription(description);
     return message.say(queueEmbed);

@@ -21,7 +21,7 @@ module.exports = class ShuffleCommand extends Command {
     }
 
     ShuffleCommand.shuffleQueue(message.guild.musicData.queue);
-    return message.say(`**Fila embaralhada :ok_hand:**`);
+    return message.say(pt_br.shuffledqueue);
   }
   static shuffleQueue(queue) {
     for (let i = queue.length - 1; i > 0; i--) {

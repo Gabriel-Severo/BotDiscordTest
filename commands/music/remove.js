@@ -26,9 +26,9 @@ module.exports = class RemoveCommand extends Command {
       return message.say(pt_br.notonchannel);
     }
     if (songNumber < 1 || songNumber > message.guild.musicData.queue.length) {
-      return message.say(':x: **A música que você tentou remover não existe**');
+      return message.say(pt_br.musicdoesnotexist);
     }
     const removed = message.guild.musicData.queue.splice(songNumber - 1, 1)[0];
-    return message.say(`:white_check_mark: **Removido** \`${removed.title}\``);
+    return message.say(pt_br.successfullyremoved.replace('{0}', removed.title));
   }
 };

@@ -30,5 +30,19 @@
   "addedtoqueuetext": "Adicionada a fila",
   "channeltext": "Canal",
   "durationtext": "Duração",
-  "queuefor": "Fila para {0}"
+  "queuefor": "Fila para {0}",
+  "playingnow2": "__Tocando agora:__",
+  "startplaying": "Nada, vamos começar a festa!:tada:",
+  "next": "__A seguir:__",
+  "requestedby": "Requisitado por:",
+  "queuedsongs": "músicas na fila",
+  "estimatedtime": "tempo total estimado",
+  "musicdoesnotexist": ":x: **A música que você tentou remover não existe**",
+  "successfullyremoved": ":white_check_mark: **Removido** `{0}`",
+  "musicnotpaused": ":x: **A música não está pausada**",
+  "musicresumed": ":play_pause: **Retomada** :thumbsup:",
+  "shuffledqueue": "**Fila embaralhada :ok_hand:**",
+  "skippedmusic": "**:fast_forward: Pulada :thumbsup:**",
+  "invalidvolume": ":x: **O volume informado é inválido**",
+  "volumechanged": ":white_check_mark: **O volume foi setado para {0}%**"
 }
