@@ -2,6 +2,7 @@ const { prefix, token } = require('./config.json');
 const { CommandoClient } = require('discord.js-commando');
 const { Structures } = require('discord.js');
 const path = require('path');
+const { contar } = require('./services/contador');
 
 Structures.extend('Guild', (Guild) => {
   class MusicGuild extends Guild {
@@ -31,7 +32,7 @@ client.registry
   .registerDefaultTypes()
   .registerGroups([
     ['music', 'Comandos de música'],
-    ['zoeira', 'Comandos de zoeira']
+    ['contador', 'Comandos do contador']
   ])
   .registerDefaultGroups()
   .registerDefaultCommands({
@@ -45,6 +46,7 @@ client.registry
 
 client.on('ready', () => {
   console.log(`${client.user.tag}`);
+  contar(client);
 });
 
 //client.on('debug', console.log);
