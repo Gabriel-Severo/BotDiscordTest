@@ -23,7 +23,7 @@ class Contador {
     return Math.floor(this.time / (1000 * 604800)) < 0 ? 0 : Math.floor(this.time / (1000 * 604800))
   }
   getMonths() {
-    return Math.floor(this.time / (1000 * 2592000)) < 0 ? 0 : Math.floor(this.time / (1000 * 2592000))
+    return Math.floor(this.time / (1000 * 2628000)) < 0 ? 0 : Math.floor(this.time / (1000 * 2628000))
   }
 }
 
@@ -47,11 +47,11 @@ async function contar(client) {
         new Date(
           Date.UTC(
             row.ano,
-            row.mes,
+            row.mes-1,
             row.dia,
-            row.hora,
+            row.horas,
             row.minutos,
-            row.segundos
+            0
           )
         )
       );

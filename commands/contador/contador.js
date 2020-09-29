@@ -79,7 +79,7 @@ module.exports = class ContadorCommand extends Command {
       .get(contadorInfo.channel_id)
       .send('Criando contador');
       db.query(
-        'INSERT INTO contador (canal_id, mensagem_id, dia, mes, ano, hora, minutos, segundos) VALUES ($1, $2, $3, $4, $5, $6, $7, 0)',
+        'INSERT INTO contador (canal_id, mensagem_id, dia, mes, ano, horas, minutos) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [contadorInfo.channel_id, mensagem.id, date[0], date[1], date[2], time[0], time[1]]
       );
       setInterval(async () => {
@@ -103,7 +103,7 @@ module.exports = class ContadorCommand extends Command {
           contador.getSeconds() % 60
         } segundos
           \t\t${contador.getMonths()} meses, ${Math.floor(
-          contador.getDays() % 30.5
+          contador.getDays() / 30.5
         )} dias, ${contador.getHours() % 24} horas, ${
           contador.getMinutes() % 60
         } minutos e ${contador.getSeconds() % 60} segundos
