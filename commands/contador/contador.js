@@ -76,11 +76,19 @@ module.exports = class ContadorCommand extends Command {
         new Date(Date.UTC(date[2], date[1], date[0], time[0], time[1], 0))
       );
       const mensagem = await message.channel.guild.channels.cache
-      .get(contadorInfo.channel_id)
-      .send('Criando contador');
+        .get(contadorInfo.channel_id)
+        .send('Criando contador');
       db.query(
         'INSERT INTO contador (canal_id, mensagem_id, dia, mes, ano, horas, minutos) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [contadorInfo.channel_id, mensagem.id, date[0], date[1], date[2], time[0], time[1]]
+        [
+          contadorInfo.channel_id,
+          mensagem.id,
+          date[0],
+          date[1],
+          date[2],
+          time[0],
+          time[1]
+        ]
       );
       setInterval(async () => {
         contador.calculateTime();

@@ -8,22 +8,32 @@ class Contador {
     this.time -= 5000;
   }
   getSeconds() {
-    return Math.floor(this.time / 1000) < 0 ? 0 : Math.floor(this.time / 1000)
+    return Math.floor(this.time / 1000) < 0 ? 0 : Math.floor(this.time / 1000);
   }
   getMinutes() {
-    return Math.floor(this.time / (1000 * 60)) < 0 ? 0 : Math.floor(this.time / (1000 * 60))
+    return Math.floor(this.time / (1000 * 60)) < 0
+      ? 0
+      : Math.floor(this.time / (1000 * 60));
   }
   getHours() {
-    return Math.floor(this.time / (1000 * 3600)) < 0 ? 0 : Math.floor(this.time / (1000 * 3600))
+    return Math.floor(this.time / (1000 * 3600)) < 0
+      ? 0
+      : Math.floor(this.time / (1000 * 3600));
   }
   getDays() {
-    return Math.floor(this.time / (1000 * 86400)) < 0 ? 0 : Math.floor(this.time / (1000 * 86400))
+    return Math.floor(this.time / (1000 * 86400)) < 0
+      ? 0
+      : Math.floor(this.time / (1000 * 86400));
   }
   getWeeks() {
-    return Math.floor(this.time / (1000 * 604800)) < 0 ? 0 : Math.floor(this.time / (1000 * 604800))
+    return Math.floor(this.time / (1000 * 604800)) < 0
+      ? 0
+      : Math.floor(this.time / (1000 * 604800));
   }
   getMonths() {
-    return Math.floor(this.time / (1000 * 2628000)) < 0 ? 0 : Math.floor(this.time / (1000 * 2628000))
+    return Math.floor(this.time / (1000 * 2628000)) < 0
+      ? 0
+      : Math.floor(this.time / (1000 * 2628000));
   }
 }
 
@@ -39,20 +49,13 @@ async function contar(client) {
         db.query('DELETE FROM contador WHERE id = $1', [row.id]);
       }
 
-      if(!mensagem){
+      if (!mensagem) {
         return db.query('DELETE FROM contador WHERE id = $1', [row.id]);
       }
 
       const contador = new Contador(
         new Date(
-          Date.UTC(
-            row.ano,
-            row.mes-1,
-            row.dia,
-            row.horas,
-            row.minutos,
-            0
-          )
+          Date.UTC(row.ano, row.mes - 1, row.dia, row.horas, row.minutos, 0)
         )
       );
 

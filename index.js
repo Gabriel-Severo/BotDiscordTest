@@ -3,6 +3,7 @@ const { CommandoClient } = require('discord.js-commando');
 const { Structures } = require('discord.js');
 const path = require('path');
 const { contar } = require('./services/contador');
+const minecraft = require('./services/minecraft');
 
 Structures.extend('Guild', (Guild) => {
   class MusicGuild extends Guild {
@@ -46,6 +47,7 @@ client.registry
 
 client.on('ready', () => {
   console.log(`${client.user.tag}`);
+  minecraft(client);
   contar(client);
 });
 
